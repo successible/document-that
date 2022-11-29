@@ -35,8 +35,9 @@ const FilePanel = () => {
       {activeFile ? (
         isBinary ? (
           <Stack
-            data-foo="bar"
+            justify="center"
             sx={{
+              height: '100%',
               margin: '0px auto',
               maxWidth: 500,
               width: '90%',
@@ -47,7 +48,7 @@ const FilePanel = () => {
               mb={20}
               title="This is a binary file"
             >
-              Binary files include PDFs, images, etc.
+              These include images and PDFs
             </Alert>
           </Stack>
         ) : (
