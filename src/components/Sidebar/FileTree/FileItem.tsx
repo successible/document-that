@@ -1,6 +1,5 @@
 import { createStyles, Group, Text, UnstyledButton } from '@mantine/core'
 import React from 'react'
-import { getActiveData } from '../../../helpers/fs/getActiveData'
 import { getPathInFileSystem } from '../../../helpers/fs/getPathInFileSystem'
 import { readFile } from '../../../helpers/fs/readFile'
 import { getIcon } from '../../../helpers/utils/components/getIcon'
@@ -12,9 +11,7 @@ type props = { name: string; fullPath: string[] }
 export const FileItem: React.FC<props> = ({ fullPath, name }) => {
   const colors = useStore((state) => state.colors)
   const activeRepo = useStore((state) => state.activeRepo)
-  const data = useStore((state) => state.data)
   const methods = useStore((state) => state.methods)
-  const activeFile = getActiveData(activeRepo, data).file
   const path = getPathInFileSystem(activeRepo, fullPath.slice(1))
 
   const iconContainer = createStyles({
@@ -27,20 +24,7 @@ export const FileItem: React.FC<props> = ({ fullPath, name }) => {
   })().classes['icon-container']
 
   return (
-    <Group
-      noWrap
-      sx={{
-        backgroundColor:
-          activeFile?.path === path ? colors.foreground : 'inherit',
-        border: '1px solid transparent',
-        borderColor:
-          activeFile?.path === path ? colors.button.secondary : 'transparent',
-        borderRadius: 3,
-        marginTop: 10,
-        padding: '1px 5px',
-        width: '100%',
-      }}
-    >
+    <Group noWrap mt={10}>
       <UnstyledButton
         className={iconContainer}
         key={`text-${name}`}
@@ -54,14 +38,10 @@ export const FileItem: React.FC<props> = ({ fullPath, name }) => {
           }
         }}
         sx={{
-          '&:hover .mantine-Text-root': {
-            color: colors.button.secondary,
+          i: {
+            height: 18,
+            width: 18,
           },
-          '&:hover i': {
-            color: colors.button.secondary,
-          },
-          outlineColor: `${colors.button.secondary} !important`,
-          outlineWidth: `1px !important`,
           width: '100%',
         }}
       >

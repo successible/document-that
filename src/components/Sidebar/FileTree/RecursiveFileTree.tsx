@@ -2,7 +2,7 @@ import React from 'react'
 import { FOLDER_PATH_KEY } from '../../../helpers/fs/createFileTree'
 import { FileTree, Folder } from '../../../store/store'
 import { FileItem } from './FileItem'
-import { FolderAccordion } from './FolderAccordion'
+import { FolderItem } from './FolderItem'
 
 type props = { fullPath: string[]; fileTree: FileTree | Folder }
 
@@ -45,7 +45,7 @@ export const RecursiveFileTree: React.FC<props> = ({ fileTree, fullPath }) => {
           } else {
             fileTree
             return (
-              <FolderAccordion
+              <FolderItem
                 folder={value}
                 fullPath={[...fullPath, name]}
                 key={name}

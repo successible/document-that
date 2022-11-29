@@ -14,7 +14,6 @@ export const DotsButton: React.FC<{
   isFolder: boolean
   fullPath: string[]
 }> = ({ fullPath, isFolder, name }) => {
-  const colors = useStore((state) => state.colors)
   const activeRepo = useStore((state) => state.activeRepo)
   const methods = useStore((state) => state.methods)
   const item = isFolder ? 'folder' : 'file'
@@ -23,21 +22,7 @@ export const DotsButton: React.FC<{
   return (
     <Group
       sx={{
-        button: {
-          '&:focus': {
-            // Mantine blue, like the outline on all other Mantine inputs
-            outline: '2px solid #1971c2',
-          },
-          '&:hover': {
-            color: colors.button.secondary,
-          },
-          color: colors.text,
-          height: '100%',
-          lineHeight: 0,
-          outlineColor: `${colors.button.secondary} !important`,
-          outlineWidth: `1px !important`,
-          width: '100%',
-        },
+        display: 'inline',
       }}
     >
       <Menu shadow="md" width={200}>

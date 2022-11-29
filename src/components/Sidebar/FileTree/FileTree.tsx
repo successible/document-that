@@ -1,7 +1,7 @@
 import { Stack } from '@mantine/core'
 import { isEmpty } from 'lodash'
 import { getActiveData } from '../../../helpers/fs/getActiveData'
-import { useStore } from '../../../store/store'
+import { FileTree as FileTreeType, useStore } from '../../../store/store'
 import { EmptyFileTree } from './EmptyFileTree'
 import { RecursiveFileTree } from './RecursiveFileTree'
 
@@ -20,7 +20,10 @@ export const FileTree = () => {
       {isEmpty(activeRepo) || !fileTree || !activeRepo ? (
         <EmptyFileTree />
       ) : (
-        <RecursiveFileTree fileTree={fileTree} fullPath={[]} />
+        <RecursiveFileTree
+          fileTree={fileTree[activeRepo.name] as FileTreeType}
+          fullPath={[activeRepo.name]}
+        />
       )}
     </Stack>
   )
