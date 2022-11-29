@@ -16,7 +16,7 @@
     "lint": "bash lint.sh --format"
   },
   "engines": {
-    "node": "18"
+    "node": "19"
   },
   "eslintConfig": {
     "parser": "@typescript-eslint/parser",
