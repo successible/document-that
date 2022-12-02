@@ -8,9 +8,13 @@ COPY pnpm-lock.yaml pnpm-lock.yaml
 RUN npm install -g pnpm
 RUN pnpm install
 
-COPY . .
+COPY src src
+COPY next.config.cjs next.config.cjs 
+COPY next-env.d.ts next-env.d.ts 
+COPY tsconfig.json tsconfig.json
 
 RUN npx tsc
+RUN npx next build
 
 ENV NODE_ENV "production"
 

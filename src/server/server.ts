@@ -58,11 +58,17 @@ fastify.register(next).after(() => {
 // Boilerplate code to start the Fastify server
 
 const start = async () => {
+  const port = Number(process.env.PORT) || 3001
   try {
-    await fastify.listen({
-      host: isProduction ? '0.0.0.0' : '127.0.0.1',
-      port: Number(process.env.PORT) || 3001,
-    })
+    await fastify.listen(
+      {
+        host: isProduction ? '0.0.0.0' : '127.0.0.1',
+        port: Number(process.env.PORT) || 3001,
+      },
+      () => {
+        console.log(`Document That started on ${port}`)
+      }
+    )
   } catch (err) {
     fastify.log.error(err)
     process.exit(1)

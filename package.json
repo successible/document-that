@@ -11,7 +11,8 @@
   },
   "type": "module",
   "scripts": {
-    "build": "next build",
+    "docker": "docker build -t 'document-that' . && docker run -p 3001:3001 'document-that'",
+    "build": "next build && next export",
     "dev": "npm install -g pnpm && pnpm install && npx tsc && (next dev -p 3050 & tsc --incremental --watch --preserveWatchOutput & nodemon dist/server/server.js)",
     "lint": "bash lint.sh --format"
   },
