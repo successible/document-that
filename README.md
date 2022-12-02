@@ -64,3 +64,4 @@ Here's how you can deploy the server using Render.com. Feel free to adapt these 
 - Set `Docker` as your environment and `/healthz` as your build path.
 - Set these environmental variables:
   - Required: `NEXT_PUBLIC_CONTACT_EMAIL`. The email you can be contacted at. Ex: `contact@foo.dev`.
+  - Optional: `ENABLE_LOGGING`. Set it to `true` for the server to log requests. Default is `false`.

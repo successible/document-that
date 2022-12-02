@@ -5,21 +5,35 @@ import next from '@fastify/nextjs'
 import Fastify, { FastifyRequest } from 'fastify'
 
 const isProduction = process.env.NODE_ENV
-const domain = process.env.CLIENT_DOMAIN
+const enableLogging = process.env.ENABLE_LOGGING
 
 const fastify = Fastify({
-  logger: !isProduction,
+  logger: enableLogging === 'true',
 })
 
-fastify.register(helmet, { contentSecurityPolicy: true })
+// Security headers for HTTP
+
+fastify.register(helmet, {
+  contentSecurityPolicy: {
+    // Matches the _headers file in src/public
+    directives: {
+      connectSrc: ["'self'", 'https://api.github.com'],
+      fontSrc: ["'self'", 'https://fonts.gstatic.com'],
+    },
+  },
+})
 
 fastify.register(cors, () => {
   return (request: FastifyRequest, callback: any) => {
     callback(null, {
-      origin: isProduction || domain ? domain : 'http://localhost:3050',
+      // We do not want to enable CORS on production
+      // In development, the server and client are on different domains, so it is required.
+      origin: isProduction ? false : 'http://localhost:3050',
     })
   }
 })
+
+// Required to proxy requests from the browser to GitHub.com to bypass CORS
 
 fastify.register(proxy, {
   http2: false,
@@ -27,13 +41,21 @@ fastify.register(proxy, {
   upstream: 'https://github.com',
 })
 
+// Healthcheck route for Docker
+
 fastify.get('/healthz', async () => {
   return 200
 })
 
+// On development, Next.js is served via the webpack HMR server on localhost:3050
+// On production, Next.js is either a static site or a server
+// When it is a server, this register function ensures Next.js is served by the server
+
 fastify.register(next).after(() => {
   fastify.next('/*')
 })
+
+// Boilerplate code to start the Fastify server
 
 const start = async () => {
   try {
