@@ -4,7 +4,7 @@
 
 > Note: Document That is licensed under the BSL 1.1 license. Under this license, you can do anything except one thing. Launch a commercial version of Document That. Otherwise, you contribute or use Document That without issue! This license is used by projects such as Sentry.io, MariaDB, CockRoachDB, and so on. You can read more about the license [here](https://open.sentry.io/licensing).
 
-## Develop Document That locally
+## Developing locally
 
 To run Document That locally on your laptop or desktop, it's very easy. The entire setup process should take less than five minutes.
 
@@ -19,7 +19,7 @@ You just need to:
 
 - Run `npm run dev` in the cloned folder to start the client and the server.
 
-  - The client is located at `http://localhost:3050`
+  - The client is located at `http://localhost:3000`
   - The server is located at `http://localhost:3001`.
 
 > Note: This server is only required for development to bypass CORS for GitHub.com
@@ -34,7 +34,7 @@ If you want to see what Document That looks on a mobile device or share it with 
 
 You can now access Document That on your mobile device at `https://eff5-73-75-45-179.ngrok.io`.
 
-## Host Document That on Netlify
+## Host on Netlify
 
 Document That is a React application based on Next.js. Hence, it can be hosted anywhere. Our default recommendation is Netlify.com. That is because:
 
@@ -49,7 +49,7 @@ Document That is a React application based on Next.js. Hence, it can be hosted a
   - `NEXT_PUBLIC_CONTACT_EMAIL`. The email you can be contacted at. Ex: `contact@foo.dev`.
   - `NETLIFY_NEXT_PLUGIN_SKIP`. Set to `true`. Required for Document That to build on Netlify.
 
-## Host Document That on Render or Digital Ocean
+## Host on Render or Digital Ocean
 
 If you do not want to deploy Document That on Netlify, that is totally fine! For example, you can deploy it on Digital Ocean, Render.com, etc. However, you'll need to run Document That as a combined client and server to do so. That is because:
 
@@ -66,4 +66,3 @@ Here's how you can deploy the server using Render.com. Feel free to adapt these 
 - Set `Docker` as your environment and `/healthz` as your build path.
 - Set these environmental variables:
   - Required: `NEXT_PUBLIC_CONTACT_EMAIL`. The email you can be contacted at. Ex: `contact@foo.dev`.
-  - Optional: `ENABLE_LOGGING`. Set it to `true` for the server to log requests. Default is `false`.

@@ -13,7 +13,7 @@
   "scripts": {
     "docker": "docker build -t 'document-that' . && docker run -p 3001:3001 'document-that'",
     "build": "next build && next export",
-    "dev": "npm install -g pnpm && pnpm install && npx tsc && (next dev -p 3050 & tsc --incremental --watch --preserveWatchOutput & nodemon dist/server/server.js)",
+    "dev": "kill-port 3000 3001; npm install -g pnpm && pnpm install && npx tsc && (next dev -p 3000 & tsc --incremental --watch --preserveWatchOutput & nodemon dist/server/server.js)",
     "lint": "bash lint.sh --format"
   },
   "engines": {
@@ -91,14 +91,15 @@
     "@types/lodash": "4.14.190",
     "@types/ms": "0.7.31",
     "@types/node": "18.11.9",
-    "@types/react": "18.0.25",
     "@types/react-dom": "18.0.9",
+    "@types/react": "18.0.25",
     "@typescript-eslint/eslint-plugin": "5.45.0",
     "@typescript-eslint/parser": "5.45.0",
-    "eslint": "8.28.0",
     "eslint-config-next": "13.0.5",
     "eslint-plugin-react": "7.31.11",
     "eslint-plugin-sort": "2.4.0",
+    "eslint": "8.28.0",
+    "kill-port": "2.0.1",
     "nodemon": "2.0.20",
     "prettier": "2.8.0",
     "typescript": "4.9.3"

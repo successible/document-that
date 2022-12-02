@@ -1,4 +1,4 @@
-import { Alert, Box, Burger, Stack, Text, Title } from '@mantine/core'
+import { Alert, Box, Stack, Text, Title } from '@mantine/core'
 import Editor, { Monaco } from '@monaco-editor/react'
 import matter from 'gray-matter'
 import { MutableRefObject, useEffect, useRef } from 'react'
@@ -9,8 +9,9 @@ import { writeFile } from '../../helpers/fs/writeFile'
 import { useStore } from '../../store/store'
 import { getWikiMarkdownLanguage } from '../../theme/language'
 import { getTheme } from '../../theme/theme'
+import { SidebarAlert } from './Alerts/SidebarAlert'
 
-const FilePanel = () => {
+export const FilePanel = () => {
   const methods = useStore((state) => state.methods)
   const colors = useStore((state) => state.colors)
   const data = useStore((state) => state.data)
@@ -19,6 +20,7 @@ const FilePanel = () => {
   const path = activeFile?.path
   const fileContent = activeFile?.content || ''
   const [text, setText] = useImmer(matter(fileContent).content)
+  const sidebarOpen = useStore((state) => state.openSidebar)
 
   const editorRef = useRef(null) as
     | MutableRefObject<null>
@@ -117,21 +119,12 @@ const FilePanel = () => {
             >
               So empty!
             </Title>
-            <Text size="xl" weight={500} mb={10}>
-              Open the sidebar and select a file to start writing.
+            <Text size="xl" weight={500} mb={10} align="center">
+              {sidebarOpen
+                ? 'Select a file on the sidebar to start writing ⚡'
+                : 'Open the sidebar and select a file to start writing ⚡'}
             </Text>
-            <Alert>
-              To open the sidebar, click or tap the{' '}
-              <Burger
-                opened={false}
-                size={16}
-                sx={{
-                  position: 'relative',
-                  top: -4,
-                }}
-              />{' '}
-              icon on the top of the screen.
-            </Alert>
+            <SidebarAlert />
           </>
         </Stack>
       )}

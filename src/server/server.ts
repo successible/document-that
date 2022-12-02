@@ -5,10 +5,9 @@ import next from '@fastify/nextjs'
 import Fastify, { FastifyRequest } from 'fastify'
 
 const isProduction = process.env.NODE_ENV
-const enableLogging = process.env.ENABLE_LOGGING
 
 const fastify = Fastify({
-  logger: enableLogging === 'true',
+  logger: false,
 })
 
 // Security headers for HTTP
@@ -28,7 +27,7 @@ fastify.register(cors, () => {
     callback(null, {
       // We do not want to enable CORS on production
       // In development, the server and client are on different domains, so it is required.
-      origin: isProduction ? false : 'http://localhost:3050',
+      origin: isProduction ? false : 'http://localhost:3000',
     })
   }
 })
@@ -47,7 +46,7 @@ fastify.get('/healthz', async () => {
   return 200
 })
 
-// On development, Next.js is served via the webpack HMR server on localhost:3050
+// On development, Next.js is served via the webpack HMR server on localhost:3000
 // On production, Next.js is either a static site or a server
 // When it is a server, this register function ensures Next.js is served by the server
 

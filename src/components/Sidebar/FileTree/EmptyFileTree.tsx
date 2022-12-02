@@ -1,7 +1,9 @@
 import { Alert } from '@mantine/core'
 import { Folder } from 'tabler-icons-react'
 
-export const EmptyFileTree = () => {
+export const EmptyFileTree: React.FC<{ repoExists: boolean }> = ({
+  repoExists,
+}) => {
   return (
     <Alert
       color="gray"
@@ -12,7 +14,8 @@ export const EmptyFileTree = () => {
       }}
       title="Bummer!"
     >
-      This repository has no files.
+      No{' '}
+      {repoExists ? 'repository has been selected' : 'files have been selected'}
     </Alert>
   )
 }

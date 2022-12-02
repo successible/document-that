@@ -1,7 +1,7 @@
 import { createStyles, Group } from '@mantine/core'
 import { useStore } from '../../store/store'
 import FilePanel from './FilePanel'
-import { Introduction } from './Introduction/Introduction'
+import { Introduction } from './Introduction'
 
 export const MainPanel = () => {
   const colors = useStore((state) => state.colors)

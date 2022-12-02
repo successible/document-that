@@ -9,6 +9,7 @@ export const FileTree = () => {
   const activeRepo = useStore((state) => state.activeRepo)
   const data = useStore((state) => state.data)
   const fileTree = getActiveData(activeRepo, data).fileTree
+  const repoExists = activeRepo && !isEmpty(activeRepo)
 
   return (
     <Stack
@@ -17,8 +18,8 @@ export const FileTree = () => {
         width: '100%',
       }}
     >
-      {isEmpty(activeRepo) || !fileTree || !activeRepo ? (
-        <EmptyFileTree />
+      {!repoExists ? (
+        <EmptyFileTree repoExists={Boolean(!repoExists)} />
       ) : (
         <RecursiveFileTree
           fileTree={fileTree[activeRepo.name] as FileTreeType}
