@@ -1,6 +1,7 @@
 import cors from '@fastify/cors'
 import helmet from '@fastify/helmet'
 import proxy from '@fastify/http-proxy'
+import next from '@fastify/nextjs'
 import Fastify, { FastifyRequest } from 'fastify'
 
 const isProduction = process.env.NODE_ENV
@@ -10,7 +11,7 @@ const fastify = Fastify({
   logger: !isProduction,
 })
 
-fastify.register(helmet, { contentSecurityPolicy: false })
+fastify.register(helmet, { contentSecurityPolicy: true })
 
 fastify.register(cors, () => {
   return (request: FastifyRequest, callback: any) => {
@@ -28,6 +29,10 @@ fastify.register(proxy, {
 
 fastify.get('/healthz', async () => {
   return 200
+})
+
+fastify.register(next).after(() => {
+  fastify.next('/*')
 })
 
 const start = async () => {

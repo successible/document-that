@@ -51,6 +51,7 @@
     "@fastify/cors": "8.2.0",
     "@fastify/helmet": "10.1.0",
     "@fastify/http-proxy": "8.3.0",
+    "@fastify/nextjs": "9.2.0",
     "@isomorphic-git/lightning-fs": "4.6.0",
     "@mantine/core": "5.8.4",
     "@mantine/form": "5.8.4",

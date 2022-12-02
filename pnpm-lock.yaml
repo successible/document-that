@@ -8,6 +8,7 @@ specifiers:
   '@fastify/cors': 8.2.0
   '@fastify/helmet': 10.1.0
   '@fastify/http-proxy': 8.3.0
+  '@fastify/nextjs': 9.2.0
   '@isomorphic-git/lightning-fs': 4.6.0
   '@mantine/core': 5.8.4
   '@mantine/form': 5.8.4
@@ -60,6 +61,7 @@ dependencies:
   '@fastify/cors': 8.2.0
   '@fastify/helmet': 10.1.0
   '@fastify/http-proxy': 8.3.0
+  '@fastify/nextjs': 9.2.0_next@13.0.5
   '@isomorphic-git/lightning-fs': 4.6.0
   '@mantine/core': 5.8.4_j2hnfxahg3fk7u7hfjctjo5wuu
   '@mantine/form': 5.8.4_react@18.2.0
@@ -503,6 +505,16 @@ packages:
       - utf-8-validate
     dev: false
 
+  /@fastify/nextjs/9.2.0_next@13.0.5:
+    resolution: {integrity: sha512-javnZvkO0+HLfuHYUqNF/14mE0T01gy2gkBCiJ2IFDIvpVhFzp65ElF3c7meGAF7Osqz//6useY04+vTIxGU3A==}
+    peerDependencies:
+      next: 12.x.x || 13.x.x
+    dependencies:
+      '@fastify/under-pressure': 8.1.0
+      fastify-plugin: 4.3.0
+      next: 13.0.5_672uxklweod7ene3nqtsh262ca
+    dev: false
+
   /@fastify/reply-from/8.3.1:
     resolution: {integrity: sha512-fRByAvTMXuBuYIimcinukOB3YdmqtYPeoybXIBNY0aPVgetHkmCVffBo/M4pEOib9Pes8wuoYL4VawI65aHl4w==}
     dependencies:
@@ -513,6 +525,13 @@ packages:
       pump: 3.0.0
       tiny-lru: 10.0.1
       undici: 5.13.0
+    dev: false
+
+  /@fastify/under-pressure/8.1.0:
+    resolution: {integrity: sha512-2Nm0UyVxTdssvNTbYVZFSH4C2LwgQcphOxgX6hIQce8jH1sm1gx/wusDBr6+0lyzwE06V537kwA7JeAvysK3xw==}
+    dependencies:
+      '@fastify/error': 3.0.0
+      fastify-plugin: 4.3.0
     dev: false
 
   /@floating-ui/core/1.0.2:

@@ -1,7 +1,6 @@
 echo 'What is your ngrok subdomain? Example: https://1bd6-73-75-45-179.ngrok.io'
 read DOMAIN
 export CLIENT_DOMAIN=$DOMAIN
-export NEXT_PUBLIC_SERVER_DOMAIN=$DOMAIN
 
 abspath() {                                               
     cd "$(dirname "$1")"
