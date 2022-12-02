@@ -3,7 +3,7 @@ import { isProduction } from '../../utils/isProduction'
 
 const getProxyRoot = (serverDomain: string | undefined) => {
   if (serverDomain || isProduction()) {
-    return `${serverDomain}/github/`
+    return `${serverDomain || window.location.origin}/github/`
   } else {
     return `http://localhost:3001/github/`
   }
