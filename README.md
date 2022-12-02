@@ -45,7 +45,9 @@ Document That is a React application based on Next.js. Hence, it can be hosted a
 **Instructions:** Deploying Document That as a static site on Netlify.com.
 
 - Set these environmental variables through the Netlify interface:
+
   - `NEXT_PUBLIC_CONTACT_EMAIL`. The email you can be contacted at. Ex: `contact@foo.dev`.
+  - `NETLIFY_NEXT_PLUGIN_SKIP`. Set to `true`. Required for Document That to build on Netlify.
 
 ## Host Document That on Render or Digital Ocean
 
