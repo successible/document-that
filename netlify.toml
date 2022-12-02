@@ -5,3 +5,7 @@
   force = true
   [redirects.headers]
     X-From = "Netlify"
+
+[build]
+  publish = ".next"
+  command = "pnpm run build"

@@ -18,7 +18,9 @@ To run Document That locally on your laptop or desktop, here is what you need to
 - Run `npm dev` in the cloned folder to start the client and the server.
 
   - The client is located at `http://localhost:3050`
-  - The server is located at `http://localhost:3001`
+  - The server is located at `http://localhost:3001`.
+
+> Note: This server is only required for development to bypass CORS for GitHub.com
 
 If you want to see what Document That looks on a mobile device or share it with a friend, do this:
 
@@ -32,42 +34,27 @@ You can now access Document That on your mobile device at `https://eff5-73-75-45
 
 ## Host Document That yourself
 
-Document That is made up of two components:
+Document That is a static React application. Hence, it can be hosted anywhere. Our recommendation is Netlify. That is because:
 
-- `Client`: TypeScript and React.js.
-- `Server`: TypeScript and Node.js.
+- It is a free service with a generous free tier.
+- It includes a free proxy to bypass CORS. Hence, there is no need to deploy your own proxy server.
+- The deployment is nearly automatic. This is due to `netlify.toml` and `_headers`. You just need to set these environmental variables on Netlify:
 
-By design, both components can be easily hosted yourself. We have written instructions for doing so below. These instructions are designed for the hosting provider Render.com. However, they can be easily adapted for another provider. For example: Digital Ocean, Heroku etc.
+  - Required: `NEXT_PUBLIC_CONTACT_EMAIL`. The email you can be contacted at. Ex: `contact@foo.dev`.
+  - Optional: `NEXT_PUBLIC_SERVER_DOMAIN`. Your proxy server domain. Ex: `https://api.foo.dev`.
 
-### Client
+If you want to deploy Document That somewhere else, that is totally fine! For example, you can deploy it on Vercel.com, Render.com, etc. However, you'll need to set up your own proxy server to bypass CORS if you do so. That is because Document That:
 
-Create a Static Site on Render.com with the following configuration:
+- Is an application that connects to GitHub.com using `git` in the browser
+- But GitHub.com does not relax CORS for this type of application.
 
-- `https://github.com/successible/document-that.git` as your `Public Git repository`
-- `pnpm run build` as your build command
-- `out` as your `Publish directory`.
-- These environmental variables:
-  - `NEXT_PUBLIC_SERVER_DOMAIN`. The domain of your server. Ex: `https://api.foo.dev`
-  - `NEXT_PUBLIC_CONTACT_EMAIL`. The email people can contact you at. Ex: `contact@foo.dev`.
+Hence, to bypass CORS, you'll need to host your own proxy server. For example, here's a proxy server that you can deploy using Render.com. It's the same one you run when developing Document That locally. Feel free to adapt these instructions to another hosting provider!
 
-Once deployed, add the following HTTP Headers. This is required for security. Do not forget to replace `mydomain.com` with your domain!
+Deploying the proxy server using Docker on Render.com:
 
-```
-/*, Strict-Transport-Security, max-age=31536000; includeSubDomains; preload
-/*, X-Frame-Options, deny
-/*, X-XSS-Protection, 1; mode=block
-/*, X-Content-Type-Options, nosniff
-/*, Referrer-Policy, strict-origin
-/*, Content-Security-Policy, default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self' https://api.mydomain.com https://api.github.com; font-src 'self' https://fonts.gstatic.com; object-src 'none'; base-uri 'none';
-```
-
-### Server
-
-Create a Web Service on Render.com with the following configuration:
-
-- `https://github.com/successible/document-that.git` as your `Public Git repository`
-- `Docker` as your environment.
-- `/healthz` as your build path.
-- These environmental variables:
+- Set `https://github.com/successible/document-that.git` as your `Public Git repository`
+- Set `Docker` as your environment.
+- Set `/healthz` as your build path.
+- Create these environmental variables:
   - `NODE_ENV`. Set it to be `production`.
   - `CLIENT_DOMAIN`. The domain of your client. Ex: `https://api.foo.dev`
