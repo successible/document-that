@@ -7,6 +7,8 @@ import { FolderItem } from './FolderItem'
 type props = { fullPath: string[]; fileTree: FileTree | Folder }
 
 export const RecursiveFileTree: React.FC<props> = ({ fileTree, fullPath }) => {
+  if (!fileTree) return <></>
+
   return (
     <>
       {Object.keys(fileTree)

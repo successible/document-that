@@ -15,6 +15,8 @@ export const mergeFileTrees = (
     newTree: FileTree | Folder,
     path: string[] = []
   ) => {
+    if (!oldTree || !newTree) return {}
+
     Object.keys(oldTree).forEach((key) => {
       if (key in newTree) {
         const oldValue = oldTree[key]
