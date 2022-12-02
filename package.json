@@ -11,7 +11,7 @@
   },
   "type": "module",
   "scripts": {
-    "build": "next build && next export",
+    "build": "next build",
     "dev": "npm install -g pnpm && pnpm install && npx tsc && (next dev -p 3050 & tsc --incremental --watch --preserveWatchOutput & nodemon dist/server/server.js)",
     "lint": "bash lint.sh --format"
   },
