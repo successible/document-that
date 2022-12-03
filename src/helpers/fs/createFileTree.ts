@@ -5,23 +5,30 @@ import { FileTree } from '../../store/store'
 
 export const PATH_KEY = '___path'
 export const EXPANDED_KEY = '___expanded'
-export const STATUS_KEY = '___status'
+export const HEAD_STATUS_KEY = '___headStatus'
+export const WORKDIR_STATUS_KEY = '___workdirStatus'
+export const STAGE_STATUS_KEY = '___stageStatus'
 export const FOLDER_KEYS = [PATH_KEY, EXPANDED_KEY]
-export const FILE_KEYS = [PATH_KEY, STATUS_KEY]
+export const FILE_KEYS = [
+  PATH_KEY,
+  HEAD_STATUS_KEY,
+  WORKDIR_STATUS_KEY,
+  STAGE_STATUS_KEY,
+]
 
 type Filename = string
-type FileFromGit = [Filename, HeadStatus, WorkdirStatus, StageStatus]
+type StatusMatrix = [Filename, HeadStatus, WorkdirStatus, StageStatus]
 
 export const createFileTree = async (
-  files: FileFromGit[],
+  files: StatusMatrix[],
   activeRepo: Repo
 ) => {
   const newFileTree: FileTree = {}
 
-  const workdirStatus = files.reduce((acc, file) => {
-    acc[file[0]] = file[2]
+  const statusMatrixManifest = files.reduce((acc, file) => {
+    acc[file[0]] = file
     return acc
-  }, {} as Record<Filename, WorkdirStatus>)
+  }, {} as Record<Filename, StatusMatrix>)
 
   const parseFiles = (files: string[], inputPath: string[] = []) => {
     files.forEach((file) => {
@@ -44,8 +51,10 @@ export const createFileTree = async (
         if (isEmpty(inputPath)) {
           // These are the files in the root
           newFileTree[file] = {
+            [HEAD_STATUS_KEY]: statusMatrixManifest[file][1],
             [PATH_KEY]: file,
-            [STATUS_KEY]: workdirStatus[file],
+            [STAGE_STATUS_KEY]: statusMatrixManifest[file][3],
+            [WORKDIR_STATUS_KEY]: statusMatrixManifest[file][2],
           }
         } else {
           // When the folder is empty, the file will be "", so we need to ignore it
@@ -54,8 +63,10 @@ export const createFileTree = async (
             const folder = get(newFileTree, inputPath)
             const fullPath = `${inputPath.join('/')}/${file}`
             folder[file] = {
+              [HEAD_STATUS_KEY]: statusMatrixManifest[fullPath][1],
               [PATH_KEY]: fullPath,
-              [STATUS_KEY]: workdirStatus[fullPath],
+              [STAGE_STATUS_KEY]: statusMatrixManifest[fullPath][3],
+              [WORKDIR_STATUS_KEY]: statusMatrixManifest[fullPath][2],
             }
           }
         }

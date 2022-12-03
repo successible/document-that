@@ -13,10 +13,7 @@ import { Repo, Repos, User } from '../pages'
 import { Colors, defaultColors } from '../theme/colors'
 import { recalculateData } from './helpers/recalculateData'
 
-export type FolderMeta = { ___path: string; ___expanded: 'yes' | 'no' }
-export type Folder = FolderMeta & { [key: string]: string }
-
-export type File = { path: string; content: string }
+// Isomorphic Git Status Types
 
 export type HeadStatus = 0 | 1
 // We are mostly interested in WorkdirStatus
@@ -26,11 +23,25 @@ export type HeadStatus = 0 | 1
 export type WorkdirStatus = 0 | 1 | 2
 export type StageStatus = 0 | 1 | 2 | 3
 
-export type FileMeta = { ___path: string; ___status: WorkdirStatus }
-export type FileTree = Record<string, Folder | FileMeta>
+export type Folder = { ___path: string; ___expanded: 'yes' | 'no' } & {
+  [key: string]: string
+}
+
+export type File = {
+  ___path: string
+  ___headStatus: HeadStatus
+  ___workdirStatus: WorkdirStatus
+  ___stageStatus: StageStatus
+} & {
+  [key: string]: string | number
+}
+
+export type FileTree = Record<string, Folder | File>
+
+export type FileContent = { path: string; content: string }
 
 export type ActiveData = {
-  file: File | null
+  file: FileContent | null
   files: string[]
   fileTree: FileTree
 }
@@ -76,7 +87,7 @@ export type StoreMethods = {
     setActiveRepo: (activeRepo: Repo | null) => void
     setActiveBranch: (activeBranch: string | null) => void
     setData: (data: Data) => void
-    setActiveFile: (file: File | null) => void
+    setActiveFile: (file: FileContent | null) => void
     recalculateData: (command?: Command[]) => void
     setFolderBeingDeleted: (path: string | null) => void
     setFileBeingDeleted: (path: string | null) => void

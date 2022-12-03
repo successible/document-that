@@ -2,7 +2,7 @@ import produce from 'immer'
 import { cloneDeep, set } from 'lodash'
 import { isObject } from 'lodash/fp'
 import { FileTree, Folder } from '../../store/store'
-import { FOLDER_KEYS, STATUS_KEY } from './createFileTree'
+import { FOLDER_KEYS, WORKDIR_STATUS_KEY } from './createFileTree'
 
 export const mergeFileTrees = (
   oldTree: FileTree | Folder,
@@ -32,8 +32,8 @@ export const mergeFileTrees = (
         // However, if you only use NEW data, the .vscode will default to expanded as false.
 
         if (isObject(oldValue) && isObject(newValue)) {
-          const oldValueIsFile = STATUS_KEY in oldValue
-          const newValueIsFile = STATUS_KEY in newValue
+          const oldValueIsFile = WORKDIR_STATUS_KEY in oldValue
+          const newValueIsFile = WORKDIR_STATUS_KEY in newValue
 
           if (!oldValueIsFile && !newValueIsFile) {
             mergedTree = produce(mergedTree, (draft) => {
