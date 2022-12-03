@@ -22,7 +22,7 @@ export const FolderItem: React.FC<props> = ({ folder, fullPath, name }) => {
       <Group sx={{ width: '100%' }}>
         <FolderIcon width={18} height={18} />
         <UnstyledButton
-          sx={{ flex: 1, paddingRight: 20 }}
+          sx={{ flex: 1, height: 25, paddingRight: 20 }}
           onClick={() => {
             // We show clicks the accordion chevron, will need to toggle the expanded section
             // Of the folder object in the relevant section of the file tree

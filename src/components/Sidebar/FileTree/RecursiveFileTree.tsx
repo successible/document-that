@@ -60,6 +60,7 @@ export const RecursiveFileTree: React.FC<props> = ({ fileTree, fullPath }) => {
                   fullPath={[...fullPath, name]}
                   key={name}
                   name={name}
+                  file={value as File}
                 />
               )
             }

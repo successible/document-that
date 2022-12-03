@@ -22,12 +22,12 @@ export const DotsButton: React.FC<{
   return (
     <Group
       sx={{
-        display: 'inline',
+        height: 18,
       }}
     >
       <Menu shadow="md" width={200}>
         <Menu.Target>
-          <UnstyledButton>
+          <UnstyledButton sx={{ height: 18 }}>
             <Dots
               aria-label={`Three dots that open menu for ${name}`}
               size={18}

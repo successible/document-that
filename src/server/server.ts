@@ -67,7 +67,7 @@ const start = async () => {
         port: Number(process.env.PORT) || 3001,
       },
       () => {
-        console.log(`Document That started on ${port}`)
+        console.log(`Document That server started on ${port}`)
       }
     )
   } catch (error) {
