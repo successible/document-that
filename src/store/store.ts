@@ -17,9 +17,17 @@ export type FolderMeta = { ___path: string; ___expanded: 'yes' | 'no' }
 export type Folder = FolderMeta & { [key: string]: string }
 
 export type File = { path: string; content: string }
-export type FileList = { path: string; status: string }
-export type FileProperties = { expanded: boolean }
-export type FileTree = Record<string, Folder | string>
+
+export type HeadStatus = 0 | 1
+// We are mostly interested in WorkdirStatus
+// 2 = Created or edited a file
+// 1 = Unchanged
+// 0 = Deleted a file
+export type WorkdirStatus = 0 | 1 | 2
+export type StageStatus = 0 | 1 | 2 | 3
+
+export type FileMeta = { ___path: string; ___status: WorkdirStatus }
+export type FileTree = Record<string, Folder | FileMeta>
 
 export type ActiveData = {
   file: File | null

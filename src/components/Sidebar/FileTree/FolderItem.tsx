@@ -3,7 +3,7 @@ import reduce from 'immer'
 import { get, set } from 'lodash'
 import { Folder as FolderIcon } from 'tabler-icons-react'
 import { getPathInFileTree } from '../../../helpers/fs/getPathInFileTree'
-import { Folder, useStore } from '../../../store/store'
+import { FileTree, Folder, useStore } from '../../../store/store'
 import { DotsButton } from './DotsButton'
 import { RecursiveFileTree } from './RecursiveFileTree'
 
@@ -42,7 +42,12 @@ export const FolderItem: React.FC<props> = ({ folder, fullPath, name }) => {
       </Group>
       {value && (
         <Box ml={10}>
-          <RecursiveFileTree fileTree={folder} fullPath={fullPath} />
+          {/* folder is always of Folder type but passing it to RecursiveFileTree as such causes a type error */}
+          {/* Even though RecursiveFileTree takes FileMeta | Folder  */}
+          <RecursiveFileTree
+            fileTree={folder as unknown as FileTree}
+            fullPath={fullPath}
+          />
         </Box>
       )}
     </Box>

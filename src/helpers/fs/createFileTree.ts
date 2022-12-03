@@ -1,30 +1,27 @@
+import { HeadStatus, StageStatus, WorkdirStatus } from 'isomorphic-git'
 import { get, isEmpty, set } from 'lodash'
 import { Repo } from '../../pages'
 import { FileTree } from '../../store/store'
 
-export const FOLDER_PATH_KEY = '___path'
-export const FOLDER_EXPANDED_KEY = '___expanded'
-export const FOLDER_KEYS = [FOLDER_PATH_KEY, FOLDER_EXPANDED_KEY]
+export const PATH_KEY = '___path'
+export const EXPANDED_KEY = '___expanded'
+export const STATUS_KEY = '___status'
+export const FOLDER_KEYS = [PATH_KEY, EXPANDED_KEY]
+export const FILE_KEYS = [PATH_KEY, STATUS_KEY]
 
 type Filename = string
-type HeadStatus = 0 | 1
-// We are mostly interested in WorkdirStatus
-// 2 = Created or edited a file
-// 1 = Unchanged
-// 0 = Deleted a file
-type WorkdirStatus = 0 | 1 | 2
-type StageStatus = 0 | 1 | 2 | 3
-type File = [Filename, HeadStatus, WorkdirStatus, StageStatus]
+type FileFromGit = [Filename, HeadStatus, WorkdirStatus, StageStatus]
 
-export const createFileTree = async (files: File[], activeRepo: Repo) => {
+export const createFileTree = async (
+  files: FileFromGit[],
+  activeRepo: Repo
+) => {
   const newFileTree: FileTree = {}
 
   const workdirStatus = files.reduce((acc, file) => {
     acc[file[0]] = file[2]
     return acc
   }, {} as Record<Filename, WorkdirStatus>)
-
-  console.log(workdirStatus)
 
   const parseFiles = (files: string[], inputPath: string[] = []) => {
     files.forEach((file) => {
@@ -38,22 +35,28 @@ export const createFileTree = async (files: File[], activeRepo: Repo) => {
         // With the absolute path to the dictionary
         !get(newFileTree, currentPath) &&
           set(newFileTree, currentPath, {
-            [FOLDER_EXPANDED_KEY]: 'no',
-            [FOLDER_PATH_KEY]: currentPath.join('/'),
+            [EXPANDED_KEY]: 'no',
+            [PATH_KEY]: currentPath.join('/'),
           })
         // Descend into the next level of files -> assets/foo.png
         parseFiles([paths.slice(1).join('/')], currentPath)
       } else {
         if (isEmpty(inputPath)) {
           // These are the files in the root
-          newFileTree[file] = file
+          newFileTree[file] = {
+            [PATH_KEY]: file,
+            [STATUS_KEY]: workdirStatus[file],
+          }
         } else {
           // When the folder is empty, the file will be "", so we need to ignore it
           if (file) {
             // Get the value of the folder, like docs, and add the file
             const folder = get(newFileTree, inputPath)
             const fullPath = `${inputPath.join('/')}/${file}`
-            folder[file] = fullPath
+            folder[file] = {
+              [PATH_KEY]: fullPath,
+              [STATUS_KEY]: workdirStatus[fullPath],
+            }
           }
         }
       }

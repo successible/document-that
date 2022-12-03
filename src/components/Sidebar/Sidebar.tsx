@@ -4,7 +4,7 @@ import { ProgressBar } from './Bar/ProgressBar'
 import { SettingsButton } from './Button/SettingsButton'
 import { SyncButton } from './Button/SyncButton'
 import { UserButton } from './Button/UserButton'
-import { FileTree } from './FileTree/FileTree'
+import { FileTreeContainer } from './FileTree/FileTreeContainer'
 import { RepoList } from './RepoList'
 
 export const Sidebar = () => {
@@ -46,7 +46,7 @@ export const Sidebar = () => {
       )}
       {activeRepo && <SyncButton />}
       {loggedIn && <SettingsButton />}
-      {loggedIn && <FileTree />}
+      {loggedIn && <FileTreeContainer />}
     </Stack>
   )
 }
