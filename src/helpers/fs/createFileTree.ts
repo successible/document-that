@@ -6,8 +6,25 @@ export const FOLDER_PATH_KEY = '___path'
 export const FOLDER_EXPANDED_KEY = '___expanded'
 export const FOLDER_KEYS = [FOLDER_PATH_KEY, FOLDER_EXPANDED_KEY]
 
-export const createFileTree = async (files: string[], activeRepo: Repo) => {
+type Filename = string
+type HeadStatus = 0 | 1
+// We are mostly interested in WorkdirStatus
+// 2 = Created or edited a file
+// 1 = Unchanged
+// 0 = Deleted a file
+type WorkdirStatus = 0 | 1 | 2
+type StageStatus = 0 | 1 | 2 | 3
+type File = [Filename, HeadStatus, WorkdirStatus, StageStatus]
+
+export const createFileTree = async (files: File[], activeRepo: Repo) => {
   const newFileTree: FileTree = {}
+
+  const workdirStatus = files.reduce((acc, file) => {
+    acc[file[0]] = file[2]
+    return acc
+  }, {} as Record<Filename, WorkdirStatus>)
+
+  console.log(workdirStatus)
 
   const parseFiles = (files: string[], inputPath: string[] = []) => {
     files.forEach((file) => {
@@ -43,7 +60,7 @@ export const createFileTree = async (files: string[], activeRepo: Repo) => {
     })
   }
 
-  parseFiles(files)
+  parseFiles(files.map((f) => f[0]))
   const name = activeRepo.name
 
   return {

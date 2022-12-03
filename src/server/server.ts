@@ -50,9 +50,11 @@ fastify.get('/healthz', async () => {
 // On production, Next.js is either a static site or a server
 // When it is a server, this register function ensures Next.js is served by the server
 
-fastify.register(next).after(() => {
-  fastify.next('/*')
-})
+if (isProduction) {
+  fastify.register(next).after(() => {
+    fastify.next('/*')
+  })
+}
 
 // Boilerplate code to start the Fastify server
 
@@ -68,8 +70,8 @@ const start = async () => {
         console.log(`Document That started on ${port}`)
       }
     )
-  } catch (err) {
-    fastify.log.error(err)
+  } catch (error) {
+    console.log(error)
     process.exit(1)
   }
 }

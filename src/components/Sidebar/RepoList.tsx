@@ -11,8 +11,6 @@ export const RepoList = () => {
   const activeRepo = useStore((state) => state.activeRepo)
   const methods = useStore((state) => state.methods)
 
-  console.log(activeRepo)
-
   return (
     <Select
       data={repos?.map((repo) => ({

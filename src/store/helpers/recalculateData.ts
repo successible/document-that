@@ -1,11 +1,12 @@
 import produce from 'immer'
+import * as git from 'isomorphic-git'
 import lodashSet from 'lodash/set'
 import { toggleFolderAtPath } from '../../helpers/commands/toggleFolderAtPath'
 import { createFileTree } from '../../helpers/fs/createFileTree'
 import { getActiveData } from '../../helpers/fs/getActiveData'
-import { listContentsOfFileSystem } from '../../helpers/fs/listContentsOfFileSystem'
 import { mergeFileTrees } from '../../helpers/fs/mergeFileTrees'
 import { readFile } from '../../helpers/fs/readFile'
+import { getProperties } from '../../helpers/github/properties/getProperties'
 import { Command, FileTree, Folder, Set, State } from '../store'
 
 export const recalculateData = async (
@@ -14,11 +15,18 @@ export const recalculateData = async (
   commands: Command[] | undefined
 ) => {
   const data = get().data
+  const accessToken = get().accessToken
+  const user = get().user
+
   const activeRepo = get().activeRepo
-  if (!activeRepo) return
+  if (!activeRepo || !accessToken || !user) return
 
   const name = activeRepo?.full_name
-  const newFiles = await listContentsOfFileSystem(activeRepo)
+
+  const newFiles = await git.statusMatrix({
+    ...getProperties(accessToken, activeRepo, user),
+  })
+
   const newFileTree = await createFileTree(newFiles, activeRepo)
 
   const oldTree = getActiveData(activeRepo, data).fileTree
