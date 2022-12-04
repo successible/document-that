@@ -28,11 +28,14 @@ export const FilePanel = () => {
 
   useEffect(() => {
     setText(fileContent)
+  }, [fileContent, setText])
+
+  useEffect(() => {
     const editor = editorRef.current
-    if (editor) {
+    if (editor && activeFile?.path) {
       editor.setScrollTop(0)
     }
-  }, [fileContent, setText])
+  }, [activeFile?.path])
 
   const isBinary = fileContent.includes('�') || path?.includes('.svg')
 

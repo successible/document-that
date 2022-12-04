@@ -10,23 +10,23 @@ import { getProxyUrl } from '../properties/getProxyUrl'
 import { createGitConfig } from './createGitConfig'
 import { deleteRepo } from './deleteRepo'
 
-const notifySavePending = () => {
-  hideNotification('notify-save-pending')
+const notifyStagePending = () => {
+  hideNotification('notify-stage-pending')
   showNotification({
     color: INFO,
-    id: 'notify-save-pending',
-    message: `💾 Changes are being saved`,
-    title: 'Save in progress',
+    id: 'notify-stage-pending',
+    message: `💾 Changes are being staged`,
+    title: 'Stage in progress',
   })
 }
 
-const notifySaveSuccess = () => {
-  hideNotification('notify-save-success')
+const notifyStageSuccess = () => {
+  hideNotification('notify-stage-success')
   showNotification({
     color: SUCCESS,
-    id: 'notify-save-success',
-    message: `🚀 Changes have been saved!`,
-    title: 'Save successful!',
+    id: 'notify-stage-success',
+    message: `🚀 Changes have been staged`,
+    title: 'Stage successful',
   })
 }
 
@@ -45,8 +45,8 @@ const notifyPushSuccess = () => {
   showNotification({
     color: SUCCESS,
     id: 'notify-push-success',
-    message: `🚀 Changes have been pushed up!`,
-    title: 'Push successful!',
+    message: `🚀 Changes have been pushed up`,
+    title: 'Push successful',
   })
 }
 
@@ -65,8 +65,8 @@ const notifyPullSuccess = () => {
   showNotification({
     color: SUCCESS,
     id: 'notify-sync-success',
-    message: `🚀 Changes have been pulled down!`,
-    title: 'Sync successful!',
+    message: `🚀 Changes have been pulled down`,
+    title: 'Sync successful',
   })
 }
 
@@ -141,7 +141,7 @@ export const cloneOrPullRepo = async (
   }
 
   if (pushChanges) {
-    notifySavePending()
+    notifyStagePending()
     let filesChanged = false
     // The equivalent of git add -A
     await git
@@ -168,7 +168,7 @@ export const cloneOrPullRepo = async (
         )
       )
 
-    notifySaveSuccess()
+    notifyStageSuccess()
 
     // Do not try to commit files unless some local files have changed
 

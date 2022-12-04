@@ -26,6 +26,10 @@ export const getTheme = (
         token: 'variable',
       },
       {
+        foreground: colors.divider,
+        token: 'meta.separator',
+      },
+      {
         foreground: colors.link.body,
         token: 'string.target',
       },

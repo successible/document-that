@@ -10,15 +10,15 @@ export const getWikiMarkdownLanguage = () => {
     defaultToken: '',
     tokenPostfix: '.md',
 
-    // escape codes
+    // Escape codes
     control: /[\\`*_\[\]{}()#+\-\.!]/,
     noncontrol: /[^\\`*_\[\]{}()#+\-\.!]/,
     escapes: /\\(?:@control)/,
 
-    // escape codes for javascript/CSS strings
+    // Escape codes for javascript/CSS strings
     jsescapes: /\\(?:[btnfr\\"']|[0-7][0-7]?|[0-3][0-7]{2})/,
 
-    // non matched elements
+    // Non-matched elements
     empty: [
       'area',
       'base',
@@ -37,50 +37,56 @@ export const getWikiMarkdownLanguage = () => {
 
     tokenizer: {
       root: [
-        // headers (with #)
+        // Headers (with #). We do support any other way of setting a header
         [
           /^(\s{0,3})(#+)((?:[^\\#]|@escapes)+)((?:#+)?)/,
           ['white', 'keyword', 'keyword', 'keyword'],
         ],
 
-        // headers (with =)
-        [/^\s*(=+|\-+)\s*$/, 'keyword'],
-
-        // headers (with ***)
-        [/^\s*((\*[ ]?)+)\s*$/, 'meta.separator'],
-
-        // quote with header, like > Note:
+        // Custom: Quote with header, like > Note:
         // Capturing groups must be arrayed sequentially and on the top level
         [
           /(^>+ )(\w+: )/,
           [{ token: 'keyword' }, { token: 'keyword', next: '@quote' }],
         ],
 
-        // quote without header
+        // Custom: Frontmatter start
+        [
+          /(^---)/,
+          [
+            {
+              token: 'meta.separator',
+              next: '@frontmatter',
+              nextEmbedded: 'yaml',
+            },
+          ],
+        ],
+
+        // Quote without header
         [/^\s*>+/, { token: 'quote', next: '@quote' }],
 
-        // list (starting with * or number)
+        // List (starting with * or number)
         [/^\s*([\*\-+:]|\d+\.)\s/, 'keyword'],
 
-        // code block (4 spaces indent)
+        // Code block (4 spaces indent)
         [/^(\t|[ ]{4})[^ ].*$/, 'string'],
 
-        // code block (3 tilde)
+        // Code block (3 tilde)
         [
           /^\s*~~~\s*((?:\w|[\/\-#])+)?\s*$/,
           { token: 'string', next: '@codeblock' },
         ],
 
-        // github style code blocks (with backticks and language)
+        // Github style code blocks (with backticks and language)
         [
           /^\s*```\s*((?:\w|[\/\-#])+)\s*$/,
           { token: 'string', next: '@codeblockgh', nextEmbedded: '$1' },
         ],
 
-        // github style code blocks (with backticks but no language)
+        // Github style code blocks (with backticks but no language)
         [/^\s*```\s*$/, { token: 'string', next: '@codeblock' }],
 
-        // markup within lines
+        // Markup within a quote or block of text
         { include: '@linecontent' },
       ],
 
@@ -93,14 +99,24 @@ export const getWikiMarkdownLanguage = () => {
       quote: [
         // It is important for the @pop to be on the top.
         [/$/, { token: 'keyword', next: '@pop' }],
-        // Include all the styling for all the inline markdown stuff, like [], or **
+        // Includes all the styling for all the inline markdown stuff, like [], or **
         { include: '@linecontent' },
-        // If the text is NOT wrapped in a [], ``, **, or _, make it a quote
+        // If the text is NOT wrapped in a [], ``, **, or _, make it the quote token
+        // If you do have this, the text will be white instead of yellow
         // Inspired by: https://stackoverflow.com/questions/11324749/a-regex-to-detect-string-not-enclosed-in-double-quotes
         [/(?<![\S`*_\]\[])([^\s`*_\]\[]+)(?![\S`*_\]\[])/, 'quote'],
       ],
 
-      // github style code blocks
+      // Custom: Block for frontmatter at the top of the markdown document, styled as yaml
+      frontmatter: [
+        [
+          /^---/,
+          { token: 'meta.separator', next: '@pop', nextEmbedded: '@pop' },
+        ],
+        [/.+/, 'variable.source'],
+      ],
+
+      // Block: Github style code blocks
       codeblockgh: [
         [
           /```\s*$/,
@@ -109,25 +125,26 @@ export const getWikiMarkdownLanguage = () => {
         [/[^`]+/, 'variable.source'],
       ],
 
+      // Source of the @linecontent variable
       linecontent: [
-        // escapes
+        // Escapes
         [/&\w+;/, 'string.escape'],
         [/@escapes/, 'escape'],
 
-        // various markup
+        // Various markup, like bold or underline
         [/\b__([^\\_]|@escapes|_(?!_))+__\b/, 'strong'],
         [/\*\*([^\\*]|@escapes|\*(?!\*))+\*\*/, 'strong'],
         [/\b_[^_]+_\b/, 'emphasis'],
         [/\*([^\\*]|@escapes)+\*/, 'emphasis'],
         [/`([^\\`]|@escapes)+`/, 'variable'],
 
-        // wiki-links, like [[foo]]
+        // Custom: Wiki-links, like [[foo]]
         [/(\[\[(?:[_A-Za-z\s\d-]*)\]\])/, 'wiki-link'],
 
-        // classic link, like [foo](bar)
+        // Custom: Classic link, like [foo](bar)
         [/(\[\w.+?\])(\(.+?\))/, ['string.link', 'url']],
 
-        // footnote link, like [^1]: https://foo.com
+        // Custom: Footnote link, like [^1]: https://foo.com
         [/(\[\^\w+\]: )(.*)/, ['string.link', 'url']],
 
         // links
@@ -140,6 +157,8 @@ export const getWikiMarkdownLanguage = () => {
 
         { include: 'html' },
       ],
+
+      // Everything below this point is untouched and copied verbatim from the Monarch language for Markdown
 
       // Note: it is tempting to rather switch to the real HTML mode instead of building our own here
       // but currently there is a limitation in Monarch that prevents us from doing it: The opening

@@ -5,26 +5,27 @@ export const ERROR = 'red'
 
 export type Colors = {
   background: string
-  foreground: string
-  comment: string
-  sidebar: {
-    icons: string
-  }
+  bold: string
   button: {
     primary: string
     secondary: string
     danger: string
   }
-  quote: string
-  bold: string
-  emphasis: string
-  text: string
-  heading: string
   code: string
+  comment: string
+  divider: string
+  emphasis: string
+  foreground: string
+  heading: string
   link: {
     body: string
     url: string
   }
+  quote: string
+  sidebar: {
+    icons: string
+  }
+  text: string
 }
 
 export const defaultColors: Colors = {
@@ -37,6 +38,7 @@ export const defaultColors: Colors = {
   },
   code: '#50fa7b',
   comment: '#6272a4',
+  divider: '#6272a4',
   emphasis: '#8be9fd',
   foreground: '#44475a',
   heading: '#bd93f9',
