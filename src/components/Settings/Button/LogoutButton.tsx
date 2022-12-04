@@ -4,9 +4,9 @@ import { clearLocalData } from '../../../helpers/github/operations/clearLocalDat
 import { styleButton } from '../../../helpers/utils/theme/styleButton'
 import { useStore } from '../../../store/store'
 
-const DELETE_LOCAL_ALL = `All of your data is stored privately and securely on your local device. Hence, you do not need to log out like you would with a traditional website.
+const DELETE_LOCAL_ALL = `All your data is stored locally on your device. Hence, you do not need to log out like a normal website.
 
-However, there may come a time when you want to delete your local data and access token from your device. That is what this button does. Your data in GitHub and other devices, will not be affected. Are you sure you want to do this?`
+However, you may want to remove your data and access token from your device. That is what this button does. Your data in GitHub and other devices, will not be affected. Are you sure you want to do this?`
 
 export const LogoutButton = () => {
   const colors = useStore((state) => state.colors)
