@@ -1,6 +1,6 @@
 import { Alert, Box, Stack, Text, Title } from '@mantine/core'
 import Editor, { Monaco } from '@monaco-editor/react'
-import matter from 'gray-matter'
+import * as monaco from 'monaco-editor/esm/vs/editor/editor.api'
 import { MutableRefObject, useEffect, useRef } from 'react'
 import { AlertCircle } from 'tabler-icons-react'
 import { useImmer } from 'use-immer'
@@ -19,15 +19,19 @@ export const FilePanel = () => {
   const activeFile = getActiveData(activeRepo, data).file
   const path = activeFile?.path
   const fileContent = activeFile?.content || ''
-  const [text, setText] = useImmer(matter(fileContent).content)
+  const [text, setText] = useImmer(fileContent)
   const sidebarOpen = useStore((state) => state.openSidebar)
 
   const editorRef = useRef(null) as
     | MutableRefObject<null>
-    | MutableRefObject<Monaco['editor']>
+    | MutableRefObject<monaco.editor.IStandaloneCodeEditor>
 
   useEffect(() => {
-    setText(matter(fileContent).content)
+    setText(fileContent)
+    const editor = editorRef.current
+    if (editor) {
+      editor.setScrollTop(0)
+    }
   }, [fileContent, setText])
 
   const isBinary = fileContent.includes('�') || path?.includes('.svg')
@@ -65,8 +69,10 @@ export const FilePanel = () => {
               width="100%"
               theme="WikiMarkdownTheme"
               options={{
+                fontSize: 13,
                 lineNumbers: 'off',
                 minimap: { enabled: false },
+                padding: { bottom: 15, top: 15 },
                 scrollBeyondLastLine: false,
                 wordWrap: 'wordWrapColumn',
                 wordWrapColumn: 120,
