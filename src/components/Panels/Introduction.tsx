@@ -62,7 +62,7 @@ export const Introduction = () => {
                 placeholder="github_pat_XXX"
                 value={localAccessToken}
                 onChange={(e) => setLocalAccessToken(e.target.value)}
-                description="Keep it scoped to repository of your wiki or blog"
+                description="The token must be able to access the contents of your wiki or blog repository"
               ></TextInput>
               <Button mt={15} type="submit" color="green">
                 Save
@@ -70,7 +70,7 @@ export const Introduction = () => {
             </form>
           </Group>
           <Divider />
-          <List size={'lg'} mb={100}>
+          <List size={'lg'} mb={100} type="ordered">
             <List.Item>
               Create a free GitHub.com account{' '}
               <Text
@@ -108,7 +108,7 @@ export const Introduction = () => {
             </Alert>
 
             <List.Item>
-              Create a repo with any name{' '}
+              Create a private repository with any name{' '}
               <Text
                 ml={2}
                 sx={{ display: 'inline', position: 'relative', top: -1 }}
@@ -126,7 +126,9 @@ export const Introduction = () => {
               title="What is a repository?"
             >
               Think of it like a folder. You should keep your entire wiki or
-              blog in one repository. You can include both images and text.
+              blog in one repository. You can include both images and text. If
+              you are stuck on a name, call it wiki or blog. Make sure it is
+              private.
             </Alert>
 
             <List.Item>
@@ -168,7 +170,7 @@ export const Introduction = () => {
               >
                 host Document That yourself
               </Anchor>{' '}
-              if that would make you more comfortable. .
+              if that would make you more comfortable.
             </Alert>
             <Alert
               color="green"
@@ -178,10 +180,10 @@ export const Introduction = () => {
               title="What permissions should I give my token?"
             >
               It depends! Document That needs read/write access to Contents of
-              your repository to work. If you want to publish your repository to
-              the Internet, great! We will also need read/write access to
-              Actions and Workflows. That is because we publish your content
-              using GitHub Actions.
+              your wiki or blog repository to work. If you want to publish your
+              repository to the Internet, great! We will also need read/write
+              access to Actions and Workflows. That is because we publish your
+              content using GitHub Actions.
             </Alert>
             <List.Item>Finally, save the token in the input above.</List.Item>
           </List>
