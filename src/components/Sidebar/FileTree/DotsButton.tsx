@@ -1,6 +1,8 @@
 import { Group } from '@mantine/core'
 import { Menu, UnstyledButton } from '@mantine/core'
+import { FaThumbsDown } from 'react-icons/fa'
 import { Dots, Edit, Folder, Plus, Trash } from 'tabler-icons-react'
+
 import { createFile } from '../../../helpers/fs/createFile'
 import { createFolder } from '../../../helpers/fs/createFolder'
 import { deleteFile } from '../../../helpers/fs/deleteFile'
@@ -36,6 +38,7 @@ export const DotsButton: React.FC<{
         </Menu.Target>
         <Menu.Dropdown>
           <Menu.Label>Options</Menu.Label>
+
           {isFolder && (
             <Menu.Item
               icon={<Plus size={14} />}
@@ -44,6 +47,7 @@ export const DotsButton: React.FC<{
               New file
             </Menu.Item>
           )}
+
           {isFolder && (
             <Menu.Item
               icon={<Folder size={14} />}
@@ -52,35 +56,38 @@ export const DotsButton: React.FC<{
               New folder
             </Menu.Item>
           )}
-          {fullPath.length > 1 && (
-            <Menu.Item
-              icon={<Edit size={14} />}
-              onClick={async () =>
-                await renameFolderOrFile(path, item, methods)
-              }
-            >
-              Rename {item}
-            </Menu.Item>
-          )}
-          {/* For the synthetic folder in the root, like wiki, we disable delete  */}
-          {fullPath.length > 1 && (
-            <>
-              <Menu.Divider />
-              <Menu.Label>Danger zone</Menu.Label>
+
+          <Menu.Item
+            icon={<Edit size={14} />}
+            onClick={async () => await renameFolderOrFile(path, item, methods)}
+          >
+            Rename {item}
+          </Menu.Item>
+
+          <>
+            <Menu.Divider />
+            <Menu.Label>Danger zone</Menu.Label>
+            {!isFolder && (
               <Menu.Item
-                icon={<Trash size={14} />}
-                onClick={async () => {
-                  if (activeRepo && isFolder) {
-                    deleteFolder(path, activeRepo, methods, true)
-                  } else if (activeRepo && !isFolder) {
-                    await deleteFile(path, methods)
-                  }
-                }}
+                icon={<FaThumbsDown size={14} />}
+                onClick={async () => {}}
               >
-                Delete {item}
+                Discard changes
               </Menu.Item>
-            </>
-          )}
+            )}
+            <Menu.Item
+              icon={<Trash size={14} />}
+              onClick={async () => {
+                if (activeRepo && isFolder) {
+                  deleteFolder(path, activeRepo, methods, true)
+                } else if (activeRepo && !isFolder) {
+                  await deleteFile(path, methods)
+                }
+              }}
+            >
+              Delete {item}
+            </Menu.Item>
+          </>
         </Menu.Dropdown>
       </Menu>
     </Group>
