@@ -51,10 +51,11 @@ export const RecursiveFileTree: React.FC<props> = ({ fileTree, fullPath }) => {
         })
         .map((name) => {
           const value = fileTree[name] as Folder | File
+          // If WORKDIR_STATUS_KEY exists in the value, it is a file
           if (WORKDIR_STATUS_KEY in value) {
-            // In every folder there is a key called ___path, which contains the absolute path of the folder
-            // We need to exclude it so that it doesn't appear in the interface
             if (!name.includes('___')) {
+              // In every folder there is a key called ___path, which contains the absolute path of the folder
+              // We need to exclude it so that it doesn't appear in the interface
               return (
                 <FileItem
                   fullPath={[...fullPath, name]}
