@@ -1,4 +1,5 @@
 import { Alert, Box, Stack, Text, Title } from '@mantine/core'
+import { useViewportSize } from '@mantine/hooks'
 import Editor, { Monaco } from '@monaco-editor/react'
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api'
 import { MutableRefObject, useEffect, useRef } from 'react'
@@ -6,6 +7,7 @@ import { AlertCircle } from 'tabler-icons-react'
 import { useImmer } from 'use-immer'
 import { getActiveData } from '../../helpers/fs/getActiveData'
 import { writeFile } from '../../helpers/fs/writeFile'
+import { MOBILE_WIDTH } from '../../helpers/utils/isMobile'
 import { useStore } from '../../store/store'
 import { getWikiMarkdownLanguage } from '../../theme/language'
 import { getTheme } from '../../theme/theme'
@@ -38,6 +40,9 @@ export const FilePanel = () => {
   }, [activeFile?.path])
 
   const isBinary = fileContent.includes('�') || path?.includes('.svg')
+  const { width } = useViewportSize()
+
+  console.log(width)
 
   return (
     <Stack sx={{ height: 'calc(100vh - 50px)', width: '100%' }}>
@@ -72,13 +77,15 @@ export const FilePanel = () => {
               width="100%"
               theme="WikiMarkdownTheme"
               options={{
+                fontFamily: 'Fira Code, monospace',
+                fontLigatures: true,
                 fontSize: 13,
                 lineNumbers: 'off',
                 minimap: { enabled: false },
                 padding: { bottom: 15, top: 15 },
                 scrollBeyondLastLine: false,
-                wordWrap: 'wordWrapColumn',
-                wordWrapColumn: 120,
+                wordWrap: width <= MOBILE_WIDTH ? 'bounded' : 'wordWrapColumn',
+                wordWrapColumn: width <= MOBILE_WIDTH ? undefined : 120,
               }}
               language="WikiMarkdown"
               defaultValue={text}
