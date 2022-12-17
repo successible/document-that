@@ -16,8 +16,8 @@ export const deleteRepo = async (activeRepo: Repo, methods: Methods) => {
 
   showNotification({
     color: SUCCESS,
-    message: '🗑️ It will be removed from the sidebar within a minute',
-    title: 'Repository successfully deleted!',
+    message: '🗑️ Your repository has successfully deleted!',
+    title: 'Repository deleted',
   })
 
   await methods.resetRepo()

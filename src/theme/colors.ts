@@ -7,9 +7,10 @@ export type Colors = {
   background: string
   bold: string
   button: {
+    danger: string
     primary: string
     secondary: string
-    danger: string
+    success: string
   }
   code: string
   comment: string
@@ -35,6 +36,7 @@ export const defaultColors: Colors = {
     danger: '#ff5555',
     primary: '#bd93f9',
     secondary: '#ff79c6',
+    success: '#3dc9b0',
   },
   code: '#50fa7b',
   comment: '#6272a4',

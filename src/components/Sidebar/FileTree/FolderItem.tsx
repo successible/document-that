@@ -1,8 +1,9 @@
-import { Box, Group, UnstyledButton } from '@mantine/core'
+import { Box, Group, Text, UnstyledButton } from '@mantine/core'
 import flatten from 'flat'
 import reduce from 'immer'
 import { get, set } from 'lodash'
 import { Folder as FolderIcon } from 'tabler-icons-react'
+import { getActiveData } from '../../../helpers/fs/getActiveData'
 import { getPathInFileTree } from '../../../helpers/fs/getPathInFileTree'
 import { FileTree, Folder, useStore } from '../../../store/store'
 import { DotsButton } from './DotsButton'
@@ -16,6 +17,17 @@ export const FolderItem: React.FC<props> = ({ folder, fullPath, name }) => {
   const data = useStore((state) => state.data)
   const methods = useStore((state) => state.methods)
 
+  const activeFilePath = String(getActiveData(activeRepo, data).file?.path)
+    .split('/')
+    .slice(2)
+    .join('/')
+
+  const path = getPathInFileTree(activeRepo, fullPath).slice(3).join('/')
+
+  // In the event you want to see what folder is selected as well
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const selectedFolder = activeFilePath.includes(path)
+
   const expanded = folder.___expanded
   const value = expanded === 'yes' ? name : ''
 
@@ -27,19 +39,29 @@ export const FolderItem: React.FC<props> = ({ folder, fullPath, name }) => {
   })
 
   return (
-    <Box mt={10} sx={{ width: '100%' }}>
-      <Group sx={{ width: '100%' }}>
-        <FolderIcon
-          width={18}
-          height={18}
-          color={isChanged ? colors.button.primary : undefined}
-        />
+    <Box sx={{ width: '100%' }}>
+      <Group
+        sx={{
+          marginTop: 5,
+          width: '100%',
+        }}
+        noWrap
+        spacing={0}
+      >
         <UnstyledButton
           sx={{
-            color: isChanged ? colors.button.primary : undefined,
-            flex: 1,
-            height: 25,
-            paddingRight: 20,
+            '&:focus': {
+              borderColor: colors.comment,
+              outline: 0,
+            },
+            '&:hover, &:active': {
+              backgroundColor: colors.foreground,
+            },
+            border: '2px solid transparent',
+            borderRadius: 5,
+            height: 30,
+            padding: '0px 6px',
+            width: '100%',
           }}
           onClick={() => {
             // We show clicks the accordion chevron, will need to toggle the expanded section
@@ -54,7 +76,20 @@ export const FolderItem: React.FC<props> = ({ folder, fullPath, name }) => {
             )
           }}
         >
-          {name}
+          <Group spacing={0}>
+            <FolderIcon
+              width={18}
+              height={18}
+              color={isChanged ? colors.emphasis : undefined}
+            />
+            <Text
+              ml={12}
+              size="md"
+              sx={{ color: isChanged ? colors.emphasis : undefined }}
+            >
+              {name}
+            </Text>
+          </Group>
         </UnstyledButton>
         <DotsButton fullPath={fullPath} isFolder={true} name={name} />
       </Group>

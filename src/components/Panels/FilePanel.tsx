@@ -42,8 +42,6 @@ export const FilePanel = () => {
   const isBinary = fileContent.includes('�') || path?.includes('.svg')
   const { width } = useViewportSize()
 
-  console.log(width)
-
   return (
     <Stack sx={{ height: 'calc(100vh - 50px)', width: '100%' }}>
       {activeFile ? (
@@ -79,7 +77,7 @@ export const FilePanel = () => {
               options={{
                 fontFamily: 'Fira Code, monospace',
                 fontLigatures: true,
-                fontSize: 13,
+                fontSize: 14,
                 lineNumbers: 'off',
                 minimap: { enabled: false },
                 padding: { bottom: 15, top: 15 },

@@ -1,9 +1,10 @@
-import { Box, createStyles, Group, Text, UnstyledButton } from '@mantine/core'
+import { createStyles, Group, Text, UnstyledButton } from '@mantine/core'
 import React from 'react'
 import {
   STAGE_STATUS_KEY,
   WORKDIR_STATUS_KEY,
 } from '../../../helpers/fs/createFileTree'
+import { getActiveData } from '../../../helpers/fs/getActiveData'
 import { getPathInFileSystem } from '../../../helpers/fs/getPathInFileSystem'
 import { readFile } from '../../../helpers/fs/readFile'
 import { getIcon } from '../../../helpers/utils/components/getIcon'
@@ -13,16 +14,25 @@ import { DotsButton } from './DotsButton'
 
 type props = { name: string; fullPath: string[]; file: File }
 export const FileItem: React.FC<props> = ({ file, fullPath, name }) => {
+  const data = useStore((state) => state.data)
   const colors = useStore((state) => state.colors)
   const activeRepo = useStore((state) => state.activeRepo)
   const methods = useStore((state) => state.methods)
   const path = getPathInFileSystem(activeRepo, fullPath.slice(1))
+  const activeFilePath = getActiveData(activeRepo, data).file?.path
+  const selectedFile = activeFilePath === path
 
   const workdirStatus = file[WORKDIR_STATUS_KEY]
   const stageStatus = file[STAGE_STATUS_KEY]
 
   const isNew = workdirStatus === 2 && stageStatus === 0
   const isEdited = workdirStatus === 2 && stageStatus !== 0
+
+  const color = isEdited
+    ? colors.emphasis
+    : isNew
+    ? colors.button.success
+    : undefined
 
   const iconContainer = createStyles({
     'icon-container': {
@@ -33,19 +43,39 @@ export const FileItem: React.FC<props> = ({ file, fullPath, name }) => {
     },
   })().classes['icon-container']
 
-  const tagStyles = {
-    borderRadius: 5,
-    fontSize: 8,
-    height: 18,
-    marginLeft: 12,
-    padding: '2.5px 5px',
-  }
-
   return (
-    <Group noWrap mt={10} spacing={0} align="center">
+    <Group
+      noWrap
+      spacing={0}
+      align="center"
+      sx={{
+        marginTop: 5,
+      }}
+    >
       <UnstyledButton
         className={iconContainer}
         key={`text-${name}`}
+        sx={{
+          '&:focus': {
+            borderColor: colors.foreground,
+            outline: 0,
+          },
+          '&:hover, &:active': {
+            backgroundColor: colors.foreground,
+          },
+          backgroundColor: selectedFile
+            ? `${colors.comment} !important`
+            : undefined,
+          border: '2px solid transparent',
+          borderRadius: 5,
+          height: 30,
+          i: {
+            height: 18,
+            width: 18,
+          },
+          padding: '0px 6px',
+          width: '100%',
+        }}
         onClick={async () => {
           if (activeRepo) {
             const file = await readFile(path)
@@ -55,44 +85,23 @@ export const FileItem: React.FC<props> = ({ file, fullPath, name }) => {
             }
           }
         }}
-        sx={{
-          i: {
-            height: 18,
-            width: 18,
-          },
-        }}
       >
-        <Group spacing={0}>
-          {/* Meta */}
-          <Group spacing={0} sx={{ height: 25 }}>
-            <i className={`${getIcon(name)}`}></i>
-            <Text ml={10} size="md">
-              {name}
-            </Text>
-          </Group>
+        <Group
+          spacing={0}
+          sx={{
+            color: color,
+            i: {
+              color,
+            },
+          }}
+        >
+          <i className={`${getIcon(name)}`}></i>
+          <Text ml={12} size="md">
+            {name}
+          </Text>
         </Group>
       </UnstyledButton>
-      {/* Tags */}
-      {isEdited && (
-        <UnstyledButton
-          sx={{
-            backgroundColor: colors.button.primary,
-            ...tagStyles,
-          }}
-        >
-          changes
-        </UnstyledButton>
-      )}
-      {isNew && (
-        <Box
-          sx={{
-            backgroundColor: colors.button.secondary,
-            ...tagStyles,
-          }}
-        >
-          new
-        </Box>
-      )}
+
       <Group sx={{ marginLeft: 'auto' }}>
         <DotsButton fullPath={fullPath} isFolder={false} name={name} />
       </Group>
