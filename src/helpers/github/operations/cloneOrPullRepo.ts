@@ -1,74 +1,13 @@
-import { hideNotification, showNotification } from '@mantine/notifications'
 import { GitProgressEvent } from 'isomorphic-git'
 import * as git from 'isomorphic-git'
+import toast from 'react-hot-toast'
 import { Repo, User } from '../../../pages'
 import { Methods } from '../../../store/store'
-import { ERROR, INFO, SUCCESS } from '../../../theme/colors'
 import { getFS } from '../../fs/getFS'
+import { handleError } from '../../utils/handleError'
 import { getProperties } from '../properties/getProperties'
 import { getProxyUrl } from '../properties/getProxyUrl'
 import { createGitConfig } from './createGitConfig'
-import { deleteRepo } from './deleteRepo'
-
-const notifyStagePending = () => {
-  hideNotification('notify-stage-pending')
-  showNotification({
-    color: INFO,
-    id: 'notify-stage-pending',
-    message: ``,
-    title: '💾 Changes are being staged',
-  })
-}
-
-const notifyStageSuccess = () => {
-  hideNotification('notify-stage-success')
-  showNotification({
-    color: SUCCESS,
-    id: 'notify-stage-success',
-    message: ``,
-    title: '🚀 Changes have been staged',
-  })
-}
-
-const notifyPushPending = () => {
-  hideNotification('notify-push-pending')
-  showNotification({
-    color: INFO,
-    id: 'notify-push-pending',
-    message: '',
-    title: '⬆️ Changes are being pushed up',
-  })
-}
-
-const notifyPushSuccess = () => {
-  hideNotification('notify-push-success')
-  showNotification({
-    color: SUCCESS,
-    id: 'notify-push-success',
-    message: ``,
-    title: '🚀 Changes pushed up',
-  })
-}
-
-const notifyPullPending = () => {
-  hideNotification('notify-sync-pending')
-  showNotification({
-    color: INFO,
-    id: 'notify-sync-pending',
-    message: '',
-    title: '🌎 Changes are being pulled down',
-  })
-}
-
-const notifyPullSuccess = () => {
-  hideNotification('notify-sync-success')
-  showNotification({
-    color: SUCCESS,
-    id: 'notify-sync-success',
-    message: '',
-    title: '🚀 Changes pulled down',
-  })
-}
 
 export const cloneOrPullRepo = async (
   accessToken: string,
@@ -83,9 +22,8 @@ export const cloneOrPullRepo = async (
   if (!fs || !activeRepo || !user || accessToken === '') return
 
   try {
-    notifyPullPending()
     console.log('Pulling repository...')
-    await git.pull({
+    const pullPromise = git.pull({
       ...getProperties(accessToken, activeRepo, user),
       onProgress: (progress: GitProgressEvent) => {
         methods.setCloneProgress(progress)
@@ -93,8 +31,13 @@ export const cloneOrPullRepo = async (
       singleBranch: true,
       url: getProxyUrl(activeRepo),
     })
+    toast.promise(pullPromise, {
+      error: (error) => handleError(error, methods),
+      loading: 'Changes are being pulled down',
+      success: () => 'Changes pulled down',
+    })
+    await pullPromise
     console.log('Pulled repository')
-    notifyPullSuccess()
   } catch (e) {
     const clone =
       // First two errors occur on Chrome, the last error occurs on Safari
@@ -104,9 +47,8 @@ export const cloneOrPullRepo = async (
 
     if (clone) {
       try {
-        notifyPullPending()
         console.log('Cloning repository...')
-        await git.clone({
+        const clonePromise = git.clone({
           ...getProperties(accessToken, activeRepo, user),
           onProgress: (progress: GitProgressEvent) => {
             console.log(progress)
@@ -114,27 +56,17 @@ export const cloneOrPullRepo = async (
           },
           url: getProxyUrl(activeRepo),
         })
+        toast.promise(clonePromise, {
+          error: (error) => handleError(error, methods),
+          loading: 'Repository is being cloned down',
+          success: () => 'Repository cloned down',
+        })
+        await clonePromise
         console.log('Cloned repository!')
         await createGitConfig(activeRepo, user)
       } catch (e) {
         console.log(e)
-
-        // If git clone is unsuccessful, and the error is 404
-        // Alert the user to the fact they may have changed or deleted their repository
-        if (String(e).includes('404')) {
-          await deleteRepo(activeRepo, methods)
-          hideNotification('notify-sync-pending')
-          hideNotification('notify-sync-missing')
-          showNotification({
-            color: ERROR,
-            id: 'notify-sync-missing',
-            message: `👻 Did you delete or rename it?`,
-            title: 'Repository unavailable',
-          })
-          return
-        }
       }
-      notifyPullSuccess()
     } else {
       console.log(e)
     }
@@ -165,36 +97,54 @@ export const cloneOrPullRepo = async (
     // This is the equivalent of  git add -A
 
     if (filesChanged) {
-      notifyStagePending()
-      for (const status of statuses) {
-        const { filepath, worktreeStatus } = status
-        worktreeStatus
-          ? git.add({
-              ...getProperties(accessToken, activeRepo, user),
-              filepath,
-            })
-          : git.remove({
-              ...getProperties(accessToken, activeRepo, user),
-              filepath,
-            })
-      }
-      notifyStageSuccess()
+      const stagingPromise = new Promise((resolve) => {
+        for (const status of statuses) {
+          const { filepath, worktreeStatus } = status
+          worktreeStatus
+            ? git.add({
+                ...getProperties(accessToken, activeRepo, user),
+                filepath,
+              })
+            : git.remove({
+                ...getProperties(accessToken, activeRepo, user),
+                filepath,
+              })
+        }
+        return resolve(true)
+      })
+
+      toast.promise(stagingPromise, {
+        error: (error) => handleError(error, methods),
+        loading: 'Changes being staged',
+        success: () => 'Changes staged',
+      })
+
+      await stagingPromise
+      console.log('Files staged!')
 
       // Now the files that have been changed are staged
       // We can now commit them and push them up
 
-      notifyPushPending()
-      await git.commit({
+      const commitPromise = git.commit({
         ...getProperties(accessToken, activeRepo, user),
         message: `Update at ${new Date().toISOString()}`,
       })
-      await git.push({
+      const pushPromise = git.push({
         ...getProperties(accessToken, activeRepo, user),
         onProgress: (progress: GitProgressEvent) => {
           console.log(progress)
         },
       })
-      notifyPushSuccess()
+
+      const pushAndCommitPromise = commitPromise.then(() => pushPromise)
+      toast.promise(pushAndCommitPromise, {
+        error: (error) => handleError(error, methods),
+        loading: 'Changes being pushed up',
+        success: () => 'Changes pushed up',
+      })
+
+      await pushAndCommitPromise
+      console.log('Files pushed up!')
     }
   }
 

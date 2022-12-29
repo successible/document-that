@@ -1,24 +1,25 @@
-import { showNotification } from '@mantine/notifications'
+import toast from 'react-hot-toast'
 import { Repo } from '../../../pages'
 import { Methods } from '../../../store/store'
-import { INFO, SUCCESS } from '../../../theme/colors'
 import { deleteFolder } from '../../fs/deleteFolder'
+import { handleError } from '../../utils/handleError'
 import { getDir } from '../properties/getDir'
 
 export const deleteRepo = async (activeRepo: Repo, methods: Methods) => {
-  showNotification({
-    color: INFO,
-    message: '',
-    title: '⌛ Repository deletion in progress',
+  const deleteFolderPromise = deleteFolder(
+    getDir(activeRepo),
+    activeRepo,
+    methods,
+    false
+  )
+
+  toast.promise(deleteFolderPromise, {
+    error: (error) => handleError(error, methods),
+    loading: 'Deleting repository',
+    success: () => 'Repository deleted',
   })
 
-  await deleteFolder(getDir(activeRepo), activeRepo, methods, false)
-
-  showNotification({
-    color: SUCCESS,
-    message: '',
-    title: '🗑️ Repository deleted!',
-  })
-
+  await deleteFolderPromise
+  console.log('Repository deleted!')
   await methods.resetRepo()
 }

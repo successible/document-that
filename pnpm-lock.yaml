@@ -14,7 +14,6 @@ specifiers:
   '@mantine/form': 5.9.5
   '@mantine/hooks': 5.9.5
   '@mantine/next': 5.9.5
-  '@mantine/notifications': 5.9.5
   '@monaco-editor/react': 4.4.6
   '@octokit/rest': 19.0.5
   '@types/color': 3.0.3
@@ -49,6 +48,7 @@ specifiers:
   react-div-100vh: 0.7.0
   react-dom: 18.2.0
   react-error-boundary: 3.1.4
+  react-hot-toast: 2.4.0
   react-icons: 4.7.1
   react-markdown: 8.0.4
   tabler-icons-react: 1.56.0
@@ -69,7 +69,6 @@ dependencies:
   '@mantine/form': 5.9.5_react@18.2.0
   '@mantine/hooks': 5.9.5_react@18.2.0
   '@mantine/next': 5.9.5_d5xj5jipthoiwqd5a5nbaex2p4
-  '@mantine/notifications': 5.9.5_h4zmljtfubfbwzvuu4gizrlimy
   '@monaco-editor/react': 4.4.6_6vrjaj6ridxbohi43n7zt4gn7q
   '@octokit/rest': 19.0.5
   color: 4.2.3
@@ -88,6 +87,7 @@ dependencies:
   react-div-100vh: 0.7.0_react@18.2.0
   react-dom: 18.2.0_react@18.2.0
   react-error-boundary: 3.1.4_react@18.2.0
+  react-hot-toast: 2.4.0_owo25xnefcwdq3zjgtohz6dbju
   react-icons: 4.7.1_react@18.2.0
   react-markdown: 8.0.4_kzbn2opkn2327fwg5yzwzya5o4
   tabler-icons-react: 1.56.0_react@18.2.0
@@ -693,22 +693,6 @@ packages:
     transitivePeerDependencies:
       - '@emotion/react'
       - '@emotion/server'
-    dev: false
-
-  /@mantine/notifications/5.9.5_h4zmljtfubfbwzvuu4gizrlimy:
-    resolution: {integrity: sha512-RGr48xPVMjlt0l6LEG7sncgTf4oKHxBDtLYOBwybNuLs1pcpmoHGdcgCkvINnXKWFHF8IQG/l3eDlKBseromJQ==}
-    peerDependencies:
-      '@mantine/core': 5.9.5
-      '@mantine/hooks': 5.9.5
-      react: '>=16.8.0'
-      react-dom: '>=16.8.0'
-    dependencies:
-      '@mantine/core': 5.9.5_hzg3oku4uxnt5crkeceagoktyy
-      '@mantine/hooks': 5.9.5_react@18.2.0
-      '@mantine/utils': 5.9.5_react@18.2.0
-      react: 18.2.0
-      react-dom: 18.2.0_react@18.2.0
-      react-transition-group: 4.4.2_biqbaboplfbrettd7655fr4n2y
     dev: false
 
   /@mantine/ssr/5.9.5_vavbdtuajfyku5chqvt5ands7q:
@@ -2015,13 +1999,6 @@ packages:
       esutils: 2.0.3
     dev: true
 
-  /dom-helpers/5.2.1:
-    resolution: {integrity: sha512-nRCa7CK3VTrM2NmGkIy4cbK7IZlgBE/PYMn55rrXefr5xXDP0LdtfPnblFDoVdcAfslJ7or6iqAUnx0CCGIWQA==}
-    dependencies:
-      '@babel/runtime': 7.20.7
-      csstype: 3.1.1
-    dev: false
-
   /dom-serializer/1.4.1:
     resolution: {integrity: sha512-VHwB3KfrcOOkelEG2ZOfxqLZdfkil8PtJi4P8N2MMXucZq2yLp75ClViUlOVwyoHEDjYU433Aq+5zWP61+RGag==}
     dependencies:
@@ -2771,6 +2748,14 @@ packages:
   /globrex/0.1.2:
     resolution: {integrity: sha512-uHJgbwAMwNFf5mLst7IWLNg14x1CkeqglJb/K3doi4dw6q2IvAAmM/Y81kevy83wP+Sst+nutFTYOGg3d1lsxg==}
     dev: true
+
+  /goober/2.1.11_csstype@3.1.1:
+    resolution: {integrity: sha512-5SS2lmxbhqH0u9ABEWq7WPU69a4i2pYcHeCxqaNq6Cw3mnrF0ghWNM4tEGid4dKy8XNIAUbuThuozDHHKJVh3A==}
+    peerDependencies:
+      csstype: ^3.0.10
+    dependencies:
+      csstype: 3.1.1
+    dev: false
 
   /gopd/1.0.1:
     resolution: {integrity: sha512-d65bNlIadxvpb/A2abVdlqKqV563juRnZ1Wtk6s1sIR8uNsXR70xqIzVqxVf1eTqDunwT2MkczEeaezCKTZhwA==}
@@ -3978,6 +3963,20 @@ packages:
       react: 18.2.0
     dev: false
 
+  /react-hot-toast/2.4.0_owo25xnefcwdq3zjgtohz6dbju:
+    resolution: {integrity: sha512-qnnVbXropKuwUpriVVosgo8QrB+IaPJCpL8oBI6Ov84uvHZ5QQcTp2qg6ku2wNfgJl6rlQXJIQU5q+5lmPOutA==}
+    engines: {node: '>=10'}
+    peerDependencies:
+      react: '>=16'
+      react-dom: '>=16'
+    dependencies:
+      goober: 2.1.11_csstype@3.1.1
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
+    transitivePeerDependencies:
+      - csstype
+    dev: false
+
   /react-icons/4.7.1_react@18.2.0:
     resolution: {integrity: sha512-yHd3oKGMgm7zxo3EA7H2n7vxSoiGmHk5t6Ou4bXsfcgWyhfDKMpyKfhHR6Bjnn63c+YXBLBPUql9H4wPJM6sXw==}
     peerDependencies:
@@ -4036,20 +4035,6 @@ packages:
       use-latest: 1.2.1_kzbn2opkn2327fwg5yzwzya5o4
     transitivePeerDependencies:
       - '@types/react'
-    dev: false
-
-  /react-transition-group/4.4.2_biqbaboplfbrettd7655fr4n2y:
-    resolution: {integrity: sha512-/RNYfRAMlZwDSr6z4zNKV6xu53/e2BuaBbGhbyYIXTrmgu/bGHzmqOs7mJSJBHy9Ud+ApHx3QjrkKSp1pxvlFg==}
-    peerDependencies:
-      react: '>=16.6.0'
-      react-dom: '>=16.6.0'
-    dependencies:
-      '@babel/runtime': 7.20.7
-      dom-helpers: 5.2.1
-      loose-envify: 1.4.0
-      prop-types: 15.8.1
-      react: 18.2.0
-      react-dom: 18.2.0_react@18.2.0
     dev: false
 
   /react/18.2.0:

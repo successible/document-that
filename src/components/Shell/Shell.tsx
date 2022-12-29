@@ -5,7 +5,7 @@ import {
   MantineProvider,
 } from '@mantine/core'
 import { useColorScheme } from '@mantine/hooks'
-import { NotificationsProvider } from '@mantine/notifications'
+import { Toaster } from 'react-hot-toast'
 import { useImmer } from 'use-immer'
 import { useMounted } from '../../hooks/useMounted'
 import { useStore } from '../../store/store'
@@ -55,20 +55,28 @@ export const Shell: React.FC<props> = ({ children }) => {
         withGlobalStyles
         withNormalizeCSS
       >
-        <NotificationsProvider autoClose={6000} position="top-right">
-          <Box
-            sx={{
-              backgroundColor: colors.background,
-              height: '100%',
-              width: '100%',
-            }}
-          >
-            <TopBar />
-            {children}
-            {/* Only show the footer when not logged in */}
-            {mounted && accessToken == '' && <BottomBar />}
-          </Box>
-        </NotificationsProvider>
+        <Box
+          sx={{
+            backgroundColor: colors.background,
+            height: '100%',
+            width: '100%',
+          }}
+        >
+          <TopBar />
+          {children}
+          {/* Only show the footer when not logged in */}
+          {mounted && accessToken == '' && <BottomBar />}
+        </Box>
+        <Toaster
+          toastOptions={{
+            duration: 6000,
+            position: 'top-right',
+            style: {
+              background: colors.foreground,
+              color: colors.text,
+            },
+          }}
+        />
       </MantineProvider>
     </ColorSchemeProvider>
   )

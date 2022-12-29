@@ -1,7 +1,7 @@
 import { Group } from '@mantine/core'
 import { Menu, UnstyledButton } from '@mantine/core'
-import { showNotification } from '@mantine/notifications'
 import * as git from 'isomorphic-git'
+import toast from 'react-hot-toast'
 import { FaThumbsDown } from 'react-icons/fa'
 import { Dots, Edit, Folder, Message, Plus, Trash } from 'tabler-icons-react'
 
@@ -13,7 +13,6 @@ import { getPathInFileSystem } from '../../../helpers/fs/getPathInFileSystem'
 import { renameFolderOrFile } from '../../../helpers/fs/renameFolderOrFile'
 import { getProperties } from '../../../helpers/github/properties/getProperties'
 import { useStore } from '../../../store/store'
-import { SUCCESS } from '../../../theme/colors'
 
 export const DotsButton: React.FC<{
   name: string
@@ -110,11 +109,7 @@ export const DotsButton: React.FC<{
                   force: true,
                 })
                 await methods.recalculateData()
-                showNotification({
-                  color: SUCCESS,
-                  message: '',
-                  title: '🗑️ Changes discarded',
-                })
+                toast.success('Changes discarded')
               }
             }}
           >
