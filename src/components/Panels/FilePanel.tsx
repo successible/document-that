@@ -17,12 +17,14 @@ export const FilePanel = () => {
   const methods = useStore((state) => state.methods)
   const colors = useStore((state) => state.colors)
   const data = useStore((state) => state.data)
+  const editorOptions = useStore((state) => state.editorOptions)
+  const sidebarOpen = useStore((state) => state.openSidebar)
+
   const activeRepo = useStore((state) => state.activeRepo)
   const activeFile = getActiveData(activeRepo, data).file
   const path = activeFile?.path
   const fileContent = activeFile?.content || ''
   const [text, setText] = useImmer(fileContent)
-  const sidebarOpen = useStore((state) => state.openSidebar)
 
   const editorRef = useRef(null) as
     | MutableRefObject<null>
@@ -34,13 +36,34 @@ export const FilePanel = () => {
 
   useEffect(() => {
     const editor = editorRef.current
-    if (editor && activeFile?.path) {
+    const path = activeFile?.path
+    const richText = editorOptions.richText
+    // Focus and bring the cursor to the top of the Monaco editor.
+    if (editor && path && richText) {
       editor.setScrollTop(0)
+      editor.focus()
+      setTimeout(() => {
+        editor.setPosition({ column: 1, lineNumber: 1 })
+      }, 0)
+      // Focus and bring the cursor to the top of the <textarea />.
+    } else if (path && !richText) {
+      const textarea = document.getElementsByTagName('textarea')
+      if (textarea.length === 1) {
+        textarea[0].focus()
+        setTimeout(() => {
+          textarea[0].setSelectionRange(0, 0)
+        }, 0)
+      }
     }
-  }, [activeFile?.path])
+  }, [activeFile?.path, editorOptions.richText])
 
   const isBinary = fileContent.includes('�') || path?.includes('.svg')
   const { width } = useViewportSize()
+
+  // 700px seems a good rule of thumb for readability
+  // https://www.freshconsulting.com/insights/blog/uiux-principle-46-text-box-width-should-help-users-read/
+  const TEXT_WIDTH = 700
+  const TEXT_FONT_SIZE = 14
 
   return (
     <Stack sx={{ height: 'calc(100vh - 50px)', width: '100%' }}>
@@ -67,47 +90,90 @@ export const FilePanel = () => {
           <Box
             sx={{
               height: '100%',
-              width: '100%',
+              margin: !sidebarOpen ? '0px auto' : undefined,
             }}
           >
-            <Editor
-              height="100%"
-              width="100%"
-              theme="WikiMarkdownTheme"
-              options={{
-                fontFamily: 'Fira Code, monospace',
-                fontLigatures: true,
-                fontSize: 14,
-                lineNumbers: 'off',
-                minimap: { enabled: false },
-                padding: { bottom: 15, top: 15 },
-                scrollBeyondLastLine: false,
-                wordWrap: width <= MOBILE_WIDTH ? 'bounded' : 'wordWrapColumn',
-                wordWrapColumn: width <= MOBILE_WIDTH ? undefined : 120,
-              }}
-              language="WikiMarkdown"
-              defaultValue={text}
-              value={text}
-              onChange={async (text) => {
-                if (text) {
-                  setText(text)
-                  path && (await writeFile(path, text))
-                  await methods.recalculateData()
-                }
-              }}
-              beforeMount={(monaco: Monaco) => {
-                monaco.languages.register({ id: 'WikiMarkdown' })
-                monaco.languages.setMonarchTokensProvider(
-                  'WikiMarkdown',
-                  getWikiMarkdownLanguage()
-                )
-                monaco.editor.defineTheme('WikiMarkdownTheme', getTheme(colors))
-              }}
-              // eslint-disable-next-line @typescript-eslint/no-unused-vars
-              onMount={(editor: any, monaco: Monaco) => {
-                editorRef.current = editor
-              }}
-            />
+            {editorOptions.richText ? (
+              <Editor
+                height="100%"
+                width={width <= MOBILE_WIDTH ? '100%' : TEXT_WIDTH}
+                theme="WikiMarkdownTheme"
+                options={{
+                  fontFamily: 'Fira Code, monospace',
+                  fontLigatures: true,
+                  fontSize: TEXT_FONT_SIZE,
+                  lineNumbers: 'off',
+                  minimap: { enabled: false },
+                  padding: { bottom: 15, top: 15 },
+                  scrollbar: { verticalScrollbarSize: 0 },
+                  scrollBeyondLastLine: false,
+                  wordWrap: 'on',
+                }}
+                language="WikiMarkdown"
+                defaultValue={text}
+                value={text}
+                onChange={async (text) => {
+                  if (text) {
+                    setText(text)
+                    path && (await writeFile(path, text))
+                    await methods.recalculateData()
+                  }
+                }}
+                beforeMount={(monaco: Monaco) => {
+                  monaco.languages.register({ id: 'WikiMarkdown' })
+                  monaco.languages.setMonarchTokensProvider(
+                    'WikiMarkdown',
+                    getWikiMarkdownLanguage()
+                  )
+                  monaco.editor.defineTheme(
+                    'WikiMarkdownTheme',
+                    getTheme(colors)
+                  )
+                }}
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                onMount={(editor: any, monaco: Monaco) => {
+                  editorRef.current = editor
+                }}
+              />
+            ) : (
+              <Box
+                sx={{
+                  height: '100%',
+                  textarea: {
+                    '&::-webkit-scrollbar': {
+                      width: '0px',
+                    },
+                    backgroundColor: colors.background,
+                    borderWidth: 0,
+                    color: colors.text,
+                    display: 'block',
+                    fontFamily: 'Fira Code, monospace',
+                    fontSize: TEXT_FONT_SIZE,
+                    height: '100%',
+                    lineHeight: 1.4,
+                    outlineWidth: 0,
+                    padding: '15px 26px',
+                    resize: 'none',
+                    scrollbarWidth: 'none',
+                    width: width <= MOBILE_WIDTH ? '100%' : TEXT_WIDTH,
+                  },
+                  width: '100%',
+                }}
+              >
+                <textarea
+                  id="plainTextEditor"
+                  value={text}
+                  onChange={async (e) => {
+                    const text = e.target.value
+                    if (text) {
+                      setText(e.target.value)
+                      path && (await writeFile(path, text))
+                      await methods.recalculateData()
+                    }
+                  }}
+                ></textarea>
+              </Box>
+            )}
           </Box>
         )
       ) : (

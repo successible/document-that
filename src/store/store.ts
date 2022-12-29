@@ -45,27 +45,33 @@ export type ActiveData = {
   files: string[]
   fileTree: FileTree
 }
+
 export type Data = Record<string, ActiveData>
 
+export type EditorOptions = {
+  richText: boolean
+}
+
 export type StoreData = {
-  fs: FS | null
   accessToken: string
-  colors: Colors
-  cloneProgress: GitProgressEvent
-  pushProgress: GitProgressEvent
-  user: User | null
-  repos: Repos
-  activeRepo: Repo | null
   activeBranch: string | null
+  activeRepo: Repo | null
+  cloneProgress: GitProgressEvent
+  colors: Colors
   data: Data
-  folderBeingDeleted: string | null
+  editorOptions: EditorOptions
+  fileBeingCreated: string | null
   fileBeingDeleted: string | null
   folderBeingCreated: string | null
-  fileBeingCreated: string | null
-  openSettings: boolean
-  openSidebar: boolean
+  folderBeingDeleted: string | null
+  fs: FS | null
   openCreateFolder: boolean
   openDeleteFolder: boolean
+  openSettings: boolean
+  openSidebar: boolean
+  pushProgress: GitProgressEvent
+  repos: Repos
+  user: User | null
 }
 
 export type Command = {
@@ -77,29 +83,30 @@ export type Command = {
 
 export type StoreMethods = {
   methods: {
-    setFS: (fs: FS) => void
-    setAccessToken: (accessToken: string) => void
-    setColors: (colors: Colors) => void
-    setCloneProgress: (progress: GitProgressEvent) => void
-    setPushProgress: (progress: GitProgressEvent) => void
-    setRepos: (repos: Repos) => void
-    setUser: (user: User | null) => void
-    setActiveRepo: (activeRepo: Repo | null) => void
-    setActiveBranch: (activeBranch: string | null) => void
-    setData: (data: Data) => void
-    setActiveFile: (file: FileContent | null) => void
     recalculateData: (command?: Command[]) => void
-    setFolderBeingDeleted: (path: string | null) => void
-    setFileBeingDeleted: (path: string | null) => void
-    setFolderBeingCreated: (path: string | null) => void
-    setFileBeingCreated: (path: string | null) => void
-    setOpenSettings: (status: boolean) => void
-    setOpenSidebar: (status: boolean) => void
-    setOpenCreateFolder: (status: boolean) => void
-    setOpenDeleteFolder: (status: boolean) => void
     refreshRepos: () => Promise<void>
     resetRepo: () => Promise<void>
     resetStore: () => void
+    setAccessToken: (accessToken: string) => void
+    setActiveBranch: (activeBranch: string | null) => void
+    setActiveFile: (file: FileContent | null) => void
+    setActiveRepo: (activeRepo: Repo | null) => void
+    setCloneProgress: (progress: GitProgressEvent) => void
+    setColors: (colors: Colors) => void
+    setData: (data: Data) => void
+    setEditorOptions: (editorOptions: EditorOptions) => void
+    setFileBeingCreated: (path: string | null) => void
+    setFileBeingDeleted: (path: string | null) => void
+    setFolderBeingCreated: (path: string | null) => void
+    setFolderBeingDeleted: (path: string | null) => void
+    setFS: (fs: FS) => void
+    setOpenCreateFolder: (status: boolean) => void
+    setOpenDeleteFolder: (status: boolean) => void
+    setOpenSettings: (status: boolean) => void
+    setOpenSidebar: (status: boolean) => void
+    setPushProgress: (progress: GitProgressEvent) => void
+    setRepos: (repos: Repos) => void
+    setUser: (user: User | null) => void
   }
 }
 
@@ -128,6 +135,7 @@ const initialState: StoreData = {
   cloneProgress: {} as GitProgressEvent,
   colors: defaultColors,
   data: {} as Data,
+  editorOptions: { richText: true },
   fileBeingCreated: null,
   fileBeingDeleted: null,
   folderBeingCreated: null,
@@ -199,6 +207,7 @@ export const useStore = create<State>()(
         setCloneProgress: (cloneProgress) => set({ cloneProgress }),
         setColors: (colors) => set({ colors }),
         setData: (data) => set({ data }),
+        setEditorOptions: (editorOptions) => set({ editorOptions }),
         setFileBeingCreated: (path) => set({ fileBeingCreated: path }),
         setFileBeingDeleted: (path) => set({ fileBeingDeleted: path }),
         setFolderBeingCreated: (path) => set({ folderBeingCreated: path }),
