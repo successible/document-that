@@ -8,16 +8,16 @@ import { getDir } from '../properties/getDir'
 export const deleteRepo = async (activeRepo: Repo, methods: Methods) => {
   showNotification({
     color: INFO,
-    message: '⌛ It should take less than a minute',
-    title: 'Repository being deleted',
+    message: '',
+    title: '⌛ Repository deletion in progress',
   })
 
   await deleteFolder(getDir(activeRepo), activeRepo, methods, false)
 
   showNotification({
     color: SUCCESS,
-    message: '🗑️ Your repository has successfully deleted!',
-    title: 'Repository deleted',
+    message: '',
+    title: '🗑️ Repository deleted!',
   })
 
   await methods.resetRepo()

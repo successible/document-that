@@ -15,8 +15,8 @@ const notifyStagePending = () => {
   showNotification({
     color: INFO,
     id: 'notify-stage-pending',
-    message: `💾 Changes are being staged`,
-    title: 'Stage in progress',
+    message: ``,
+    title: '💾 Changes are being staged',
   })
 }
 
@@ -25,8 +25,8 @@ const notifyStageSuccess = () => {
   showNotification({
     color: SUCCESS,
     id: 'notify-stage-success',
-    message: `🚀 Changes have been staged`,
-    title: 'Stage successful',
+    message: ``,
+    title: '🚀 Changes have been staged',
   })
 }
 
@@ -35,8 +35,8 @@ const notifyPushPending = () => {
   showNotification({
     color: INFO,
     id: 'notify-push-pending',
-    message: `⬆️ Changes are being pushed up`,
-    title: 'Push in progress',
+    message: '',
+    title: '⬆️ Changes are being pushed up',
   })
 }
 
@@ -45,8 +45,8 @@ const notifyPushSuccess = () => {
   showNotification({
     color: SUCCESS,
     id: 'notify-push-success',
-    message: `🚀 Changes have been pushed up`,
-    title: 'Push successful',
+    message: ``,
+    title: '🚀 Changes pushed up',
   })
 }
 
@@ -55,8 +55,8 @@ const notifyPullPending = () => {
   showNotification({
     color: INFO,
     id: 'notify-sync-pending',
-    message: `🌎 Changes are being pulled down`,
-    title: 'Sync in progress',
+    message: '',
+    title: '🌎 Changes are being pulled down',
   })
 }
 
@@ -65,8 +65,8 @@ const notifyPullSuccess = () => {
   showNotification({
     color: SUCCESS,
     id: 'notify-sync-success',
-    message: `🚀 Changes have been pulled down`,
-    title: 'Sync successful',
+    message: '',
+    title: '🚀 Changes pulled down',
   })
 }
 
@@ -93,7 +93,7 @@ export const cloneOrPullRepo = async (
       singleBranch: true,
       url: getProxyUrl(activeRepo),
     })
-    console.log('Pulled repository!')
+    console.log('Pulled repository')
     notifyPullSuccess()
   } catch (e) {
     const clone =
@@ -140,39 +140,49 @@ export const cloneOrPullRepo = async (
     }
   }
 
+  // We only want to stage, commit, and push files
+  // If the user has explicitly asked for that by clicking the sync button
   if (pushChanges) {
-    notifyStagePending()
+    // Let's changed for any changed files
     let filesChanged = false
-    // The equivalent of git add -A
-    await git
+    const statuses = await git
       .statusMatrix({ ...getProperties(accessToken, activeRepo, user) })
       .then((status) =>
         Promise.all(
           status.map(([filepath, , worktreeStatus]) => {
-            // 2 = create or edit a file
-            // 1 = unchanged
-            // 0 = delete a file
+            // 2 = Create or edited a file
+            // 1 = Unchanged
+            // 0 = Deleted a file
             if (worktreeStatus !== 1) {
               filesChanged = true
             }
-            return worktreeStatus
-              ? git.add({
-                  ...getProperties(accessToken, activeRepo, user),
-                  filepath,
-                })
-              : git.remove({
-                  ...getProperties(accessToken, activeRepo, user),
-                  filepath,
-                })
+            return { filepath, worktreeStatus }
           })
         )
       )
 
-    notifyStageSuccess()
-
-    // Do not try to commit files unless some local files have changed
+    // If files have changed, let's stage them
+    // This is the equivalent of  git add -A
 
     if (filesChanged) {
+      notifyStagePending()
+      for (const status of statuses) {
+        const { filepath, worktreeStatus } = status
+        worktreeStatus
+          ? git.add({
+              ...getProperties(accessToken, activeRepo, user),
+              filepath,
+            })
+          : git.remove({
+              ...getProperties(accessToken, activeRepo, user),
+              filepath,
+            })
+      }
+      notifyStageSuccess()
+
+      // Now the files that have been changed are staged
+      // We can now commit them and push them up
+
       notifyPushPending()
       await git.commit({
         ...getProperties(accessToken, activeRepo, user),

@@ -10,8 +10,8 @@ export const clearLocalData = async (methods: Methods) => {
   showNotification({
     color: SUCCESS,
     id: 'logout-successful',
-    message: '🚪 You been successfully logged out.',
-    title: 'Logout successful!',
+    message: '',
+    title: `🚪 You've been logged out`,
   })
 
   methods.resetStore()

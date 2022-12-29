@@ -112,8 +112,8 @@ export const DotsButton: React.FC<{
                 await methods.recalculateData()
                 showNotification({
                   color: SUCCESS,
-                  message: '🗑️ Your changes have been discarded!',
-                  title: 'Changes discarded',
+                  message: '',
+                  title: '🗑️ Changes discarded',
                 })
               }
             }}
