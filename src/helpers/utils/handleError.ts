@@ -2,6 +2,10 @@ import toast from 'react-hot-toast'
 import { Methods } from '../../store/store'
 import { clearLocalData } from '../github/operations/clearLocalData'
 
+export const toastPromiseOptions = {
+  error: { style: { display: 'none' } },
+}
+
 export const handleError = (error: unknown, methods: Methods): string => {
   const e = String(error)
   console.log(e)

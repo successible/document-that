@@ -4,7 +4,7 @@ import toast from 'react-hot-toast'
 import { Repo, User } from '../../../pages'
 import { Methods } from '../../../store/store'
 import { getFS } from '../../fs/getFS'
-import { handleError } from '../../utils/handleError'
+import { handleError, toastPromiseOptions } from '../../utils/handleError'
 import { getProperties } from '../properties/getProperties'
 import { getProxyUrl } from '../properties/getProxyUrl'
 import { createGitConfig } from './createGitConfig'
@@ -31,11 +31,15 @@ export const cloneOrPullRepo = async (
       singleBranch: true,
       url: getProxyUrl(activeRepo),
     })
-    toast.promise(pullPromise, {
-      error: (error) => handleError(error, methods),
-      loading: 'Changes are being pulled down',
-      success: () => 'Changes pulled down',
-    })
+    toast.promise(
+      pullPromise,
+      {
+        error: (error) => handleError(error, methods),
+        loading: 'Changes are being pulled down',
+        success: () => 'Changes pulled down',
+      },
+      toastPromiseOptions
+    )
     await pullPromise
     console.log('Pulled repository')
   } catch (e) {
@@ -56,11 +60,15 @@ export const cloneOrPullRepo = async (
           },
           url: getProxyUrl(activeRepo),
         })
-        toast.promise(clonePromise, {
-          error: (error) => handleError(error, methods),
-          loading: 'Repository is being cloned down',
-          success: () => 'Repository cloned down',
-        })
+        toast.promise(
+          clonePromise,
+          {
+            error: (error) => handleError(error, methods),
+            loading: 'Repository is being cloned down',
+            success: () => 'Repository cloned down',
+          },
+          toastPromiseOptions
+        )
         await clonePromise
         console.log('Cloned repository!')
         await createGitConfig(activeRepo, user)
@@ -113,11 +121,15 @@ export const cloneOrPullRepo = async (
         return resolve(true)
       })
 
-      toast.promise(stagingPromise, {
-        error: (error) => handleError(error, methods),
-        loading: 'Changes being staged',
-        success: () => 'Changes staged',
-      })
+      toast.promise(
+        stagingPromise,
+        {
+          error: (error) => handleError(error, methods),
+          loading: 'Changes being staged',
+          success: () => 'Changes staged',
+        },
+        toastPromiseOptions
+      )
 
       await stagingPromise
       console.log('Files staged!')
@@ -137,11 +149,15 @@ export const cloneOrPullRepo = async (
       })
 
       const pushAndCommitPromise = commitPromise.then(() => pushPromise)
-      toast.promise(pushAndCommitPromise, {
-        error: (error) => handleError(error, methods),
-        loading: 'Changes being pushed up',
-        success: () => 'Changes pushed up',
-      })
+      toast.promise(
+        pushAndCommitPromise,
+        {
+          error: (error) => handleError(error, methods),
+          loading: 'Changes being pushed up',
+          success: () => 'Changes pushed up',
+        },
+        toastPromiseOptions
+      )
 
       await pushAndCommitPromise
       console.log('Files pushed up!')

@@ -69,7 +69,6 @@ export const Shell: React.FC<props> = ({ children }) => {
         </Box>
         <Toaster
           toastOptions={{
-            duration: 6000,
             position: 'top-right',
             style: {
               background: colors.foreground,
