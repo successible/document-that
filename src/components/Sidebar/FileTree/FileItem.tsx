@@ -1,4 +1,5 @@
 import { createStyles, Group, Text, UnstyledButton } from '@mantine/core'
+import { truncate } from 'lodash'
 import React from 'react'
 import {
   STAGE_STATUS_KEY,
@@ -97,7 +98,7 @@ export const FileItem: React.FC<props> = ({ file, fullPath, name }) => {
         >
           <i className={`${getIcon(name)}`}></i>
           <Text ml={12} size="md">
-            {name}
+            {truncate(name, { length: 30 })}
           </Text>
         </Group>
       </UnstyledButton>

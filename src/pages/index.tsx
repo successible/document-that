@@ -5,8 +5,7 @@ import React, { useEffect } from 'react'
 import { Modals } from '../components/Modals/Modals'
 import { MainPanel } from '../components/Panels/MainPanel'
 import { Sidebar } from '../components/Sidebar/Sidebar'
-import { getActiveData } from '../helpers/fs/getActiveData'
-import { mobileWidth } from '../helpers/utils/theme/layout'
+import { MOBILE_WIDTH } from '../helpers/utils/isMobile'
 import { usePullOrCloneRepo } from '../hooks/useCloneOrPullRepo'
 import { useFetchDataFromGit } from '../hooks/useFetchDataFromGit'
 import { useFetchDataFromGitHub } from '../hooks/useFetchDataFromGitHub'
@@ -28,18 +27,15 @@ const Index = () => {
   const activeRepo = useStore((state) => state.activeRepo)
   const user = useStore((state) => state.user)
   const data = useStore((state) => state.data)
-  const activeData = getActiveData(activeRepo, data)
   const methods = useStore((state) => state.methods)
 
   // Why: https://gist.github.com/meotimdihia/9faec94a4b223932143cd81a19058f05
   const { mounted } = useMounted()
   const { width } = useViewportSize()
 
-  const isMobile = width <= mobileWidth
-  const filesExist = activeRepo && activeData.files.length >= 1
-  const showSidebar =
-    accessToken !== '' && (!isMobile || (isMobile && filesExist))
-  const showMainPanel = !isMobile || (isMobile && !sidebarOpen)
+  const isMobile = width <= MOBILE_WIDTH
+  const showSidebar = isMobile
+  const showMainPanel = true
 
   useEffect(() => {
     // Should we open the sidebar when the application mounts?
