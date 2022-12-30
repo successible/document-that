@@ -175,11 +175,17 @@ export const cloneOrPullRepo = async (
       url: getProxyUrl(activeRepo),
     })
 
-    const remoteLatestCommitHash = String(remoteInfo.refs?.heads?.main)
+    const remoteHeads = remoteInfo.refs?.heads || { main: 'XXX' }
+    // We assume if heads exists, that the first key of the object is main or master
+    const remoteLatestCommitHash = Object.keys(remoteHeads)[0]
+
+    const differenceBetweenLocalAndRemote =
+      localLatestCommitHash !== remoteLatestCommitHash &&
+      remoteLatestCommitHash !== 'XXX'
 
     // Now it is time to push our files to the remote branch!
 
-    if (filesChanged || localLatestCommitHash !== remoteLatestCommitHash) {
+    if (filesChanged || differenceBetweenLocalAndRemote) {
       const pushPromise = git.push({
         ...getProperties(accessToken, activeRepo, user),
         onProgress: (progress: GitProgressEvent) => {
