@@ -18,7 +18,7 @@ export const cloneOrPullRepo = async (
 ) => {
   const fs = getFS()
 
-  // Silently abort the clone or pull repo operation if any of these are null or undefined
+  // Silently abort the clone or pull operation if any of these are null or undefined
   if (!fs || !activeRepo || !user || accessToken === '') return
 
   try {
@@ -45,6 +45,8 @@ export const cloneOrPullRepo = async (
   } catch (e) {
     const clone =
       // First two errors occur on Chrome, the last error occurs on Safari
+      // Basically, if these errors occur during the pull operation, the repo does not exist
+      // Hence, we need to try cloning it down
       String(e).includes('ENOENT') ||
       String(e).includes('Cannot read properties of null') ||
       String(e).includes('null is not an object')
@@ -105,6 +107,7 @@ export const cloneOrPullRepo = async (
     // This is the equivalent of  git add -A
 
     if (filesChanged) {
+      console.log('Files being staged...')
       const stagingPromise = new Promise((resolve) => {
         for (const status of statuses) {
           const { filepath, worktreeStatus } = status
@@ -137,10 +140,46 @@ export const cloneOrPullRepo = async (
       // Now the files that have been changed are staged
       // We can now commit them and push them up
 
+      console.log('Files being committed...')
+
       const commitPromise = git.commit({
         ...getProperties(accessToken, activeRepo, user),
         message: `Update at ${new Date().toISOString()}`,
       })
+
+      toast.promise(
+        commitPromise,
+        {
+          error: (error) => handleError(error, methods),
+          loading: 'Changes being committed',
+          success: () => 'Changes committed',
+        },
+        toastPromiseOptions
+      )
+
+      await commitPromise
+      console.log('Files committed!')
+    }
+
+    // We need to run the equivalent of gif diff main origin/main
+    // That way, we can check whether files have been changed and committed locally
+    // These will need to be pushed up to the remote and will not show up on the filesChanged check
+
+    const localLatestCommitHash = await git.resolveRef({
+      ...getProperties(accessToken, activeRepo, user),
+      ref: 'main',
+    })
+
+    const remoteInfo = await git.getRemoteInfo({
+      ...getProperties(accessToken, activeRepo, user),
+      url: getProxyUrl(activeRepo),
+    })
+
+    const remoteLatestCommitHash = String(remoteInfo.refs?.heads?.main)
+
+    // Now it is time to push our files to the remote branch!
+
+    if (filesChanged || localLatestCommitHash !== remoteLatestCommitHash) {
       const pushPromise = git.push({
         ...getProperties(accessToken, activeRepo, user),
         onProgress: (progress: GitProgressEvent) => {
@@ -148,21 +187,21 @@ export const cloneOrPullRepo = async (
         },
       })
 
-      const pushAndCommitPromise = commitPromise.then(() => pushPromise)
       toast.promise(
-        pushAndCommitPromise,
+        pushPromise,
         {
           error: (error) => handleError(error, methods),
-          loading: 'Changes being pushed up',
-          success: () => 'Changes pushed up',
+          loading: 'Changes being pushed',
+          success: () => 'Changes pushed',
         },
         toastPromiseOptions
       )
 
-      await pushAndCommitPromise
+      await pushPromise
       console.log('Files pushed up!')
     }
   }
 
+  // Finally, we need to rerender the client with the new data
   await methods.recalculateData()
 }
