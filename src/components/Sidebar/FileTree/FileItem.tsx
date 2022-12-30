@@ -1,4 +1,5 @@
 import { createStyles, Group, Text, UnstyledButton } from '@mantine/core'
+import { Tooltip } from '@mantine/core'
 import { truncate } from 'lodash'
 import React from 'react'
 import {
@@ -12,6 +13,8 @@ import { getIcon } from '../../../helpers/utils/components/getIcon'
 import { isMobile } from '../../../helpers/utils/isMobile'
 import { File, useStore } from '../../../store/store'
 import { DotsButton } from './DotsButton'
+
+export const SIDEBAR_TRUNCATE_LENGTH = 30
 
 type props = { name: string; fullPath: string[]; file: File }
 export const FileItem: React.FC<props> = ({ file, fullPath, name }) => {
@@ -53,55 +56,65 @@ export const FileItem: React.FC<props> = ({ file, fullPath, name }) => {
         marginTop: 5,
       }}
     >
-      <UnstyledButton
-        className={iconContainer}
-        key={`text-${name}`}
+      <Tooltip
+        events={{ focus: true, hover: true, touch: true }}
+        label={name}
         sx={{
-          '&:focus': {
-            borderColor: colors.foreground,
-            outline: 0,
-          },
-          '&:hover, &:active': {
-            backgroundColor: colors.foreground,
-          },
-          backgroundColor: selectedFile
-            ? `${colors.comment} !important`
-            : undefined,
-          border: '2px solid transparent',
-          borderRadius: 5,
-          height: 30,
-          i: {
-            height: 18,
-            width: 18,
-          },
-          padding: '0px 6px',
-          width: '100%',
-        }}
-        onClick={async () => {
-          if (activeRepo) {
-            const file = await readFile(path)
-            methods.setActiveFile({ content: file, path })
-            if (isMobile()) {
-              methods.setOpenSidebar(false)
-            }
-          }
+          backgroundColor: colors.button.neutral,
+          color: colors.text,
+          display: name.length >= SIDEBAR_TRUNCATE_LENGTH ? undefined : 'none',
         }}
       >
-        <Group
-          spacing={0}
+        <UnstyledButton
+          className={iconContainer}
+          key={`text-${name}`}
           sx={{
-            color: color,
-            i: {
-              color,
+            '&:focus': {
+              borderColor: colors.foreground,
+              outline: 0,
             },
+            '&:hover, &:active': {
+              backgroundColor: colors.foreground,
+            },
+            backgroundColor: selectedFile
+              ? `${colors.comment} !important`
+              : undefined,
+            border: '2px solid transparent',
+            borderRadius: 5,
+            height: 30,
+            i: {
+              height: 18,
+              width: 18,
+            },
+            padding: '0px 6px',
+            width: '100%',
+          }}
+          onClick={async () => {
+            if (activeRepo) {
+              const file = await readFile(path)
+              methods.setActiveFile({ content: file, path })
+              if (isMobile()) {
+                methods.setOpenSidebar(false)
+              }
+            }
           }}
         >
-          <i className={`${getIcon(name)}`}></i>
-          <Text ml={12} size="md">
-            {truncate(name, { length: 30 })}
-          </Text>
-        </Group>
-      </UnstyledButton>
+          <Group
+            spacing={0}
+            sx={{
+              color: color,
+              i: {
+                color,
+              },
+            }}
+          >
+            <i className={`${getIcon(name)}`}></i>
+            <Text ml={12} size="md">
+              {truncate(name, { length: SIDEBAR_TRUNCATE_LENGTH })}
+            </Text>
+          </Group>
+        </UnstyledButton>
+      </Tooltip>
 
       <Group sx={{ marginLeft: 'auto' }}>
         <DotsButton fullPath={fullPath} isFolder={false} name={name} />
