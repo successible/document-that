@@ -170,18 +170,22 @@ export const cloneOrPullRepo = async (
       ref: 'main',
     })
 
+    console.log(localLatestCommitHash)
+
     const remoteInfo = await git.getRemoteInfo({
       ...getProperties(accessToken, activeRepo, user),
       url: getProxyUrl(activeRepo),
     })
 
-    const remoteHeads = remoteInfo.refs?.heads || { main: 'XXX' }
-    // We assume if heads exists, that the first key of the object is main or master
-    const remoteLatestCommitHash = Object.keys(remoteHeads)[0]
+    // We assume if heads exists, the first key of the object is main or master
+    const remoteHeads = remoteInfo.refs?.heads || { main: 'placeholder' }
+    const remoteLatestCommitHash = remoteHeads[Object.keys(remoteHeads)[0]]
 
     const differenceBetweenLocalAndRemote =
       localLatestCommitHash !== remoteLatestCommitHash &&
-      remoteLatestCommitHash !== 'XXX'
+      // If you do not also check for !== placeholder, local will also differ from remote
+      // When there is an error pulling down the remoteInfo
+      remoteLatestCommitHash !== 'placeholder'
 
     // Now it is time to push our files to the remote branch!
 
