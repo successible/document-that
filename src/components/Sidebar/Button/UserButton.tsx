@@ -11,7 +11,15 @@ export const UserButton = () => {
   if (user && accessToken !== '') {
     const url = user?.html_url
     return (
-      <Anchor href={url} rel="noopener noreferer" target="_blank">
+      <Anchor
+        href={url}
+        rel="noopener noreferer"
+        target="_blank"
+        sx={{
+          outlineColor: `${colors.outline} !important`,
+          padding: '0px 3px',
+        }}
+      >
         <Box
           sx={{
             ':focus, :hover': {

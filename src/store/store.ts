@@ -36,6 +36,10 @@ export type File = {
   [key: string]: string | number
 }
 
+export type Tab = {
+  path: string
+}
+
 export type FileTree = Record<string, Folder | File>
 
 export type FileContent = { path: string; content: string }
@@ -43,6 +47,7 @@ export type FileContent = { path: string; content: string }
 export type ActiveData = {
   file: FileContent | null
   files: string[]
+  tabs: Tab[]
   fileTree: FileTree
 }
 
@@ -90,6 +95,7 @@ export type StoreMethods = {
     setAccessToken: (accessToken: string) => void
     setActiveBranch: (activeBranch: string | null) => void
     setActiveFile: (file: FileContent | null) => void
+    setActiveTabs: (tabs: Tab[], file?: FileContent | null) => void
     setActiveRepo: (activeRepo: Repo | null) => void
     setCloneProgress: (progress: GitProgressEvent) => void
     setColors: (colors: Colors) => void
@@ -126,6 +132,7 @@ export const defaultActiveData = {
   file: null,
   files: [],
   fileTree: {},
+  tabs: [],
 } as ActiveData
 
 const initialState: StoreData = {
@@ -204,6 +211,18 @@ export const useStore = create<State>()(
           return set({ data: newData })
         },
         setActiveRepo: (activeRepo) => set({ activeRepo }),
+        setActiveTabs: (activeTabs, activeFile) => {
+          const activeRepo = get().activeRepo
+          const data = get().data
+          if (!activeRepo) return
+          const newData = produce(data, (draft) => {
+            getActiveData(activeRepo, draft).tabs = activeTabs
+            if (activeFile !== undefined) {
+              getActiveData(activeRepo, draft).file = activeFile
+            }
+          })
+          return set({ data: newData })
+        },
         setCloneProgress: (cloneProgress) => set({ cloneProgress }),
         setColors: (colors) => set({ colors }),
         setData: (data) => set({ data }),

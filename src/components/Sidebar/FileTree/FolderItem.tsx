@@ -51,7 +51,7 @@ export const FolderItem: React.FC<props> = ({ folder, fullPath, name }) => {
         <UnstyledButton
           sx={{
             '&:focus': {
-              borderColor: colors.comment,
+              borderColor: colors.outline,
               outline: 0,
             },
             '&:hover, &:active': {

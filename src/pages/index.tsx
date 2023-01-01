@@ -50,7 +50,7 @@ const Index = () => {
     <Stack spacing={0}>
       <Modals />
       <Group noWrap spacing={0}>
-        {sidebarOpen && <Sidebar />}
+        {sidebarOpen && accessToken && <Sidebar />}
         {mounted && showMainPanel ? <MainPanel /> : <div />}
       </Group>
     </Stack>

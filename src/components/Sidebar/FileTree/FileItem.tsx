@@ -1,5 +1,6 @@
 import { createStyles, Group, Text, UnstyledButton } from '@mantine/core'
 import { Tooltip } from '@mantine/core'
+import { useViewportSize } from '@mantine/hooks'
 import { truncate } from 'lodash'
 import React from 'react'
 import {
@@ -10,7 +11,7 @@ import { getActiveData } from '../../../helpers/fs/getActiveData'
 import { getPathInFileSystem } from '../../../helpers/fs/getPathInFileSystem'
 import { readFile } from '../../../helpers/fs/readFile'
 import { getIcon } from '../../../helpers/utils/components/getIcon'
-import { isMobile } from '../../../helpers/utils/isMobile'
+import { isMobile, MOBILE_WIDTH } from '../../../helpers/utils/isMobile'
 import { File, useStore } from '../../../store/store'
 import { DotsButton } from './DotsButton'
 
@@ -23,7 +24,10 @@ export const FileItem: React.FC<props> = ({ file, fullPath, name }) => {
   const activeRepo = useStore((state) => state.activeRepo)
   const methods = useStore((state) => state.methods)
   const path = getPathInFileSystem(activeRepo, fullPath.slice(1))
-  const activeFilePath = getActiveData(activeRepo, data).file?.path
+  const activeData = getActiveData(activeRepo, data)
+  const activeFilePath = activeData.file?.path
+  const activeTabs = activeData.tabs
+
   const selectedFile = activeFilePath === path
 
   const workdirStatus = file[WORKDIR_STATUS_KEY]
@@ -46,6 +50,8 @@ export const FileItem: React.FC<props> = ({ file, fullPath, name }) => {
       },
     },
   })().classes['icon-container']
+
+  const { width } = useViewportSize()
 
   return (
     <Group
@@ -70,7 +76,7 @@ export const FileItem: React.FC<props> = ({ file, fullPath, name }) => {
           key={`text-${name}`}
           sx={{
             '&:focus': {
-              borderColor: colors.foreground,
+              borderColor: colors.outline,
               outline: 0,
             },
             '&:hover, &:active': {
@@ -93,6 +99,10 @@ export const FileItem: React.FC<props> = ({ file, fullPath, name }) => {
             if (activeRepo) {
               const file = await readFile(path)
               methods.setActiveFile({ content: file, path })
+              const tabExists = activeTabs.find((tab) => path === tab.path)
+              if (!tabExists && width >= MOBILE_WIDTH) {
+                methods.setActiveTabs([...activeTabs, { path }])
+              }
               if (isMobile()) {
                 methods.setOpenSidebar(false)
               }

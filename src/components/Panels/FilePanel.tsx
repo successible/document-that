@@ -91,6 +91,7 @@ export const FilePanel = () => {
             sx={{
               height: '100%',
               margin: !sidebarOpen ? '0px auto' : undefined,
+              width: '100%',
             }}
           >
             {editorOptions.richText ? (
@@ -141,6 +142,7 @@ export const FilePanel = () => {
                   height: '100%',
                   textarea: {
                     '&::-webkit-scrollbar': {
+                      display: 'none',
                       width: '0px',
                     },
                     backgroundColor: colors.background,

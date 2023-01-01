@@ -33,7 +33,7 @@ export const DotsButton: React.FC<{
         <UnstyledButton
           sx={{
             '&:focus': {
-              borderColor: colors.foreground,
+              borderColor: colors.outline,
               outline: 0,
             },
             '&:hover, &:active': {

@@ -10,7 +10,7 @@ import { useImmer } from 'use-immer'
 import { useMounted } from '../../hooks/useMounted'
 import { useStore } from '../../store/store'
 import { BottomBar } from './BottomBar'
-import { TopBar } from './TopBar'
+import { TopBar } from './TopBar/TopBar'
 
 type props = { children: React.ReactNode }
 export const Shell: React.FC<props> = ({ children }) => {
@@ -48,6 +48,31 @@ export const Shell: React.FC<props> = ({ children }) => {
             ],
           },
           colorScheme: 'dark',
+          components: {
+            Button: {
+              styles: {
+                root: {
+                  outlineColor: `${colors.outline} !important`,
+                },
+              },
+            },
+            Select: {
+              styles: {
+                input: {
+                  '&:focus': {
+                    borderColor: `${colors.outline} !important`,
+                  },
+                },
+              },
+            },
+            UnstyledButton: {
+              styles: {
+                root: {
+                  outlineColor: `${colors.outline} !important`,
+                },
+              },
+            },
+          },
           fontSizes: {
             sm: 16,
           },

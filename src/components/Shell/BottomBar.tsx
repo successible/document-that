@@ -23,7 +23,13 @@ export const BottomBar = () => {
       <Box mr={10}>
         <a href={`mailto:${getContactEmail()}`}>{getContactEmail()}</a>
       </Box>
-      <Box>
+      <Box
+        sx={{
+          a: {
+            outlineColor: `${colors.outline} !important`,
+          },
+        }}
+      >
         <Link href="/legal">Legal</Link>
       </Box>
     </Group>

@@ -20,6 +20,7 @@ export const Introduction = () => {
   const accessToken = useStore((state) => state.accessToken)
   const methods = useStore((state) => state.methods)
   const sidebarOpen = useStore((state) => state.openSidebar)
+  const colors = useStore((state) => state.colors)
 
   return (
     <Stack
@@ -98,6 +99,9 @@ export const Introduction = () => {
                 size="sm"
                 target="_blank"
                 underline={true}
+                sx={{
+                  outlineColor: `${colors.outline} !important`,
+                }}
               >
                 GitHub.com
               </Anchor>{' '}
@@ -158,6 +162,9 @@ export const Introduction = () => {
                 size="sm"
                 target="_blank"
                 underline={true}
+                sx={{
+                  outlineColor: `${colors.outline} !important`,
+                }}
               >
                 Our code is open
               </Anchor>
@@ -167,6 +174,9 @@ export const Introduction = () => {
                 size="sm"
                 target="_blank"
                 underline={true}
+                sx={{
+                  outlineColor: `${colors.outline} !important`,
+                }}
               >
                 host Document That yourself
               </Anchor>{' '}

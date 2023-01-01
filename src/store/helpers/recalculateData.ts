@@ -21,8 +21,6 @@ export const recalculateData = async (
   const activeRepo = get().activeRepo
   if (!activeRepo || !accessToken || !user) return
 
-  const name = activeRepo?.full_name
-
   const newFiles = await git.statusMatrix({
     ...getProperties(accessToken, activeRepo, user),
   })
@@ -33,13 +31,17 @@ export const recalculateData = async (
   const mergedTree = mergeFileTrees(oldTree, newFileTree as Folder | FileTree)
 
   const oldFile = getActiveData(activeRepo, data).file
+  const oldTabs = getActiveData(activeRepo, data).tabs || []
+
   const newContents = await readFile(oldFile?.path || '')
   const newFile = { content: newContents, path: oldFile?.path }
 
+  const name = activeRepo?.full_name
   let newData = produce(data, (draft) => {
     lodashSet(draft, [name, 'file'], newContents ? newFile : null)
     lodashSet(draft, [name, 'files'], newFiles)
     lodashSet(draft, [name, 'fileTree'], mergedTree)
+    lodashSet(draft, [name, 'tabs'], oldTabs)
   })
 
   // If no command is present, there is not need to alter the data

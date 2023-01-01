@@ -23,6 +23,7 @@ export type Colors = {
     body: string
     url: string
   }
+  outline: string
   quote: string
   sidebar: {
     icons: string
@@ -50,6 +51,7 @@ export const defaultColors: Colors = {
     body: '#ff79c6',
     url: '#8be9fd',
   },
+  outline: '#4c8bf5',
   quote: '#f1fa8c',
   sidebar: {
     icons: '#ff79c6',
