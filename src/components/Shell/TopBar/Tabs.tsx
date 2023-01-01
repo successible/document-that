@@ -18,8 +18,10 @@ export const Tabs = () => {
 
   const { width } = useViewportSize()
 
-  // This very niche check ensures that on mobile, if a file is selected AND the user switches to desktop
+  // This is a very niche check
+  // It ensures that on mobile, if a file is selected AND the user switches to desktop
   // The active file has a corresponding tab added.
+
   useEffect(() => {
     const path = activeData.file?.path
     if (
@@ -49,6 +51,9 @@ export const Tabs = () => {
     >
       {activeData.tabs.map((tab) => {
         const activeTab = activeData.file?.path === tab.path
+        const activeButtonColor = activeTab
+          ? colors.button.neutral
+          : colors.button.neutral
 
         const flattedFileTree = flatten(
           // We exclude the top level key.
@@ -66,7 +71,16 @@ export const Tabs = () => {
           flattedFileTree[flattenPath + '.' + WORKDIR_STATUS_KEY] === 2
 
         return (
-          <Group spacing={0} key={tab.path} noWrap>
+          <Group
+            spacing={0}
+            key={tab.path}
+            noWrap
+            sx={{
+              border: '2px solid transparent',
+              borderColor: activeTab ? colors.comment : colors.button.neutral,
+              borderRadius: 5,
+            }}
+          >
             <Button
               onClick={async () => {
                 const file = await readFile(tab.path)
@@ -77,7 +91,7 @@ export const Tabs = () => {
                   borderColor: colors.outline,
                 },
                 border: '2px solid transparent',
-                borderRadius: '5px 0px 0px 5px',
+                borderRadius: '3px 0px 0px 3px',
                 color: isChanged ? colors.emphasis : colors.text,
                 fontSize: '13px',
                 outlineWidth: '0px !important',
@@ -87,14 +101,9 @@ export const Tabs = () => {
               styles={(theme) => ({
                 root: {
                   '&:hover': {
-                    backgroundColor: theme.fn.darken(
-                      activeTab ? colors.comment : colors.button.neutral,
-                      0.05
-                    ),
+                    backgroundColor: theme.fn.darken(activeButtonColor, 0.05),
                   },
-                  backgroundColor: activeTab
-                    ? colors.comment
-                    : colors.button.neutral,
+                  backgroundColor: activeButtonColor,
                 },
               })}
             >
@@ -107,7 +116,7 @@ export const Tabs = () => {
                   borderColor: colors.outline,
                 },
                 border: '2px solid transparent',
-                borderRadius: '0px 5px 5px 0px',
+                borderRadius: '0px 3px 3px 0px',
                 fontSize: '13px',
                 outlineWidth: '0px !important',
                 paddingLeft: 4,
@@ -148,14 +157,9 @@ export const Tabs = () => {
               styles={(theme) => ({
                 root: {
                   '&:hover': {
-                    backgroundColor: theme.fn.darken(
-                      activeTab ? colors.comment : colors.button.neutral,
-                      0.05
-                    ),
+                    backgroundColor: theme.fn.darken(activeButtonColor, 0.05),
                   },
-                  backgroundColor: activeTab
-                    ? colors.comment
-                    : colors.button.neutral,
+                  backgroundColor: activeButtonColor,
                 },
               })}
             >

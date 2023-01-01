@@ -60,9 +60,9 @@ export const FilePanel = () => {
   const isBinary = fileContent.includes('�') || path?.includes('.svg')
   const { width } = useViewportSize()
 
-  // 700px seems a good rule of thumb for readability
+  // 700px to 800px seems a good rule of thumb for readability
   // https://www.freshconsulting.com/insights/blog/uiux-principle-46-text-box-width-should-help-users-read/
-  const TEXT_WIDTH = 700
+  const TEXT_WIDTH = 800
   const TEXT_FONT_SIZE = 14
 
   return (
@@ -108,6 +108,7 @@ export const FilePanel = () => {
                   padding: { bottom: 15, top: 15 },
                   scrollbar: { verticalScrollbarSize: 0 },
                   scrollBeyondLastLine: false,
+                  wordBasedSuggestions: false,
                   wordWrap: 'on',
                 }}
                 language="WikiMarkdown"
