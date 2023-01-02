@@ -20,7 +20,7 @@ export const findMatchesInDocuments = async (
       const path = getPathInFileSystem(activeRepo, fileInfo[0].split('/'))
       const content = await readFile(path)
       const matches = Array.from(
-        content.matchAll(new RegExp(`^.*(${term}).*$`, 'gim'))
+        content.matchAll(new RegExp(`^.*(${term}).*$`, 'gimd'))
       )
       if (matches.length > 0) {
         documents[path] = { matches, path }
