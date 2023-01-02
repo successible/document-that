@@ -1,6 +1,6 @@
-import { Repo } from '../../pages'
-import { getPathInFileSystem } from '../fs/getPathInFileSystem'
-import { readFile } from '../fs/readFile'
+import { getPathInFileSystem } from '../../../../helpers/fs/getPathInFileSystem'
+import { readFile } from '../../../../helpers/fs/readFile'
+import { Repo } from '../../../../pages'
 
 export type Matches = Record<
   string,
