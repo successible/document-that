@@ -8,6 +8,7 @@ import {
   TextInput,
   Title,
 } from '@mantine/core'
+import { groupBy } from 'lodash'
 import { useImmer } from 'use-immer'
 import { getActiveData } from '../../helpers/fs/getActiveData'
 import {
@@ -28,6 +29,7 @@ export const SearchModal = () => {
   const activeData = getActiveData(activeRepo, data)
   return (
     <Modal
+      size={'800px'}
       onClose={() => {
         methods.setOpenSearch(false)
       }}
@@ -66,22 +68,26 @@ export const SearchModal = () => {
             })
 
             type Mode = 'group' | 'no-group'
-            type Chunks = { mode: Mode; text: string; line: number }[]
+            type Chunks = { mode: Mode; text: string; lineNumber: number }[]
             const groupedDocument = [] as Chunks
-            let mode = 'group' as Mode
-            let line = 0
 
             let start = 0
             let end = 0
             let text = ''
-            const lines = [] as { end: number; start: number; text: string }[]
+            let lineNumber = 0
+            const lines = [] as {
+              end: number
+              start: number
+              text: string
+              lineNumber: number
+            }[]
 
             content.split('').map((char, i) => {
               if (char === '\n') {
                 // Do not capture the front matter lines, dividers, or empty lines
-                if (text !== '' && text !== '---') {
-                  lines.push({ end, start, text })
-                }
+                text += char
+                lines.push({ end, lineNumber, start, text })
+                lineNumber += 1
                 start = i + 1
                 end = i + 1
                 text = ''
@@ -91,78 +97,110 @@ export const SearchModal = () => {
               }
             })
 
-            // Let us loop through every character to split it into group or not group
-            content.split('').map((char, i) => {
-              // What line are we on?
-              if (char === '\n') {
-                line += 1
-              }
-
-              // Is the character in a group?
+            // First, we want to remove all lines that do not have a capturing group or match in them
+            const filteredLines = lines.filter((line) => {
               let inGroup = false
-              groups.forEach((group) => {
-                const [groupStart, groupEnd] = group
-                if (i >= groupStart && i < groupEnd) {
-                  inGroup = true
-                }
+              const { start, text } = line
+              text.split('').map((char, i) => {
+                groups.forEach((group) => {
+                  const [groupStart, groupEnd] = group
+                  if (i >= groupStart - start && i < groupEnd - start) {
+                    inGroup = true
+                  }
+                })
               })
-
-              // Create the first chunk
-              if (groupedDocument.length === 0) {
-                mode = inGroup ? 'group' : 'no-group'
-                groupedDocument.push({ line, mode, text: '' })
-              }
-
-              // If the mode has changed, create a new chunk
-              if (mode === 'group' && !inGroup) {
-                mode = 'no-group'
-                groupedDocument.push({ line, mode, text: '' })
-              } else if (mode === 'no-group' && inGroup) {
-                mode = 'group'
-                groupedDocument.push({ line, mode, text: '' })
-              }
-
-              // Add the next character to the text of the current chunk
-              groupedDocument.slice(-1)[0].text += char
+              return inGroup
             })
 
+            console.log(filteredLines)
+
+            // Next, within each line, we want to assign each character
+            // As either being in or out of the capturing group and add it to a chunk.
+            // That way, we can assign it styles depending on whether
+            // It is in the group or not
+
+            filteredLines.map((line) => {
+              let mode = 'group' as Mode
+              const { lineNumber, start, text } = line
+              text.split('').map((char, i) => {
+                let inGroup = false
+                groups.forEach((group) => {
+                  const [groupStart, groupEnd] = group
+                  if (i >= groupStart - start && i < groupEnd - start) {
+                    inGroup = true
+                  }
+                })
+
+                // Create the first chunk
+                if (groupedDocument.length === 0) {
+                  mode = inGroup ? 'group' : 'no-group'
+                  groupedDocument.push({ lineNumber, mode, text: '' })
+                }
+
+                // If the mode has changed, create a new chunk
+                if (mode === 'group' && !inGroup) {
+                  mode = 'no-group'
+                  groupedDocument.push({ lineNumber, mode, text: '' })
+                } else if (mode === 'no-group' && inGroup) {
+                  mode = 'group'
+                  groupedDocument.push({ lineNumber, mode, text: '' })
+                }
+
+                // Add the next character to the text of the current chunk
+                groupedDocument.slice(-1)[0].text += char
+              })
+            })
+
+            // Finally, we render the chunks created above.
+
             console.log(groupedDocument)
+            const groupedDocumentByLine = groupBy(groupedDocument, 'lineNumber')
 
             return (
               <>
                 <Group mt={10} mb={10}>
                   {key.split('/').slice(2).join('/')}
                 </Group>
-                {/* <Box>
-                  {groupedDocument.map((chunk) => {
+
+                <Box>
+                  {Object.keys(groupedDocumentByLine).flatMap((line) => {
+                    const document = groupedDocumentByLine[line]
                     return (
-                      <>
-                        {chunk.mode === 'group' ? (
-                          <Box
-                            sx={{
-                              backgroundColor: colors.button.primary,
-                              borderRadius: '5px',
-                              color: colors.text,
-                              display: 'inline',
-                              fontWeight: 700,
-                              padding: '2px 4px',
-                              whiteSpace: 'pre-wrap',
-                            }}
-                          >
-                            {chunk.text}
-                          </Box>
-                        ) : (
-                          <Box
-                            sx={{ display: 'inline', whiteSpace: 'pre-wrap' }}
-                          >
-                            {chunk.text}
-                          </Box>
-                        )}
-                      </>
+                      <Box
+                        mt={10}
+                        mb={10}
+                        sx={{
+                          width: '100%',
+                        }}
+                      >
+                        {document.map((chunk) => {
+                          return (
+                            <>
+                              {chunk.mode === 'group' ? (
+                                <Box
+                                  sx={{
+                                    backgroundColor: colors.button.primary,
+                                    borderRadius: '5px',
+                                    color: colors.text,
+                                    display: 'inline',
+                                    fontWeight: 700,
+                                    padding: '2px 4px',
+                                  }}
+                                >
+                                  {chunk.text}
+                                </Box>
+                              ) : (
+                                <Box sx={{ display: 'inline' }}>
+                                  {chunk.text}
+                                </Box>
+                              )}
+                            </>
+                          )
+                        })}
+                      </Box>
                     )
                   })}
-                </Box> */}
-
+                </Box>
                 <Divider mt={20} />
               </>
             )
