@@ -71,6 +71,26 @@ export const SearchModal = () => {
             let mode = 'group' as Mode
             let line = 0
 
+            let start = 0
+            let end = 0
+            let text = ''
+            const lines = [] as { end: number; start: number; text: string }[]
+
+            content.split('').map((char, i) => {
+              if (char === '\n') {
+                // Do not capture the front matter lines, dividers, or empty lines
+                if (text !== '' && text !== '---') {
+                  lines.push({ end, start, text })
+                }
+                start = i + 1
+                end = i + 1
+                text = ''
+              } else {
+                end += 1
+                text += char
+              }
+            })
+
             // Let us loop through every character to split it into group or not group
             content.split('').map((char, i) => {
               // What line are we on?
@@ -113,7 +133,7 @@ export const SearchModal = () => {
                 <Group mt={10} mb={10}>
                   {key.split('/').slice(2).join('/')}
                 </Group>
-                <Box>
+                {/* <Box>
                   {groupedDocument.map((chunk) => {
                     return (
                       <>
@@ -141,7 +161,7 @@ export const SearchModal = () => {
                       </>
                     )
                   })}
-                </Box>
+                </Box> */}
 
                 <Divider mt={20} />
               </>
