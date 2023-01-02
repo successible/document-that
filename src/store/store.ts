@@ -46,7 +46,7 @@ export type FileContent = { path: string; content: string }
 
 export type ActiveData = {
   file: FileContent | null
-  files: string[]
+  files: [string, number, number, number][]
   tabs: Tab[]
   fileTree: FileTree
 }
@@ -72,6 +72,7 @@ export type StoreData = {
   fs: FS | null
   openCreateFolder: boolean
   openDeleteFolder: boolean
+  openSearch: boolean
   openSettings: boolean
   openSidebar: boolean
   pushProgress: GitProgressEvent
@@ -108,6 +109,7 @@ export type StoreMethods = {
     setFS: (fs: FS) => void
     setOpenCreateFolder: (status: boolean) => void
     setOpenDeleteFolder: (status: boolean) => void
+    setOpenSearch: (status: boolean) => void
     setOpenSettings: (status: boolean) => void
     setOpenSidebar: (status: boolean) => void
     setPushProgress: (progress: GitProgressEvent) => void
@@ -130,7 +132,7 @@ export type Set = (
 
 export const defaultActiveData = {
   file: null,
-  files: [],
+  files: [] as unknown as [string, number, number, number][],
   fileTree: {},
   tabs: [],
 } as ActiveData
@@ -150,6 +152,7 @@ const initialState: StoreData = {
   fs: null,
   openCreateFolder: false,
   openDeleteFolder: false,
+  openSearch: false,
   openSettings: false,
   openSidebar: false,
   pushProgress: {} as GitProgressEvent,
@@ -234,6 +237,7 @@ export const useStore = create<State>()(
         setFS: (fs) => set({ fs }),
         setOpenCreateFolder: (status) => set({ openCreateFolder: status }),
         setOpenDeleteFolder: (status) => set({ openDeleteFolder: status }),
+        setOpenSearch: (status) => set({ openSearch: status }),
         setOpenSettings: (status) => set({ openSettings: status }),
         setOpenSidebar: (status) => set({ openSidebar: status }),
         setPushProgress: (pushProgress) => set({ pushProgress }),

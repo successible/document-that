@@ -1,6 +1,7 @@
 import { Stack } from '@mantine/core'
 import { useStore } from '../../store/store'
 import { ProgressBar } from './Bar/ProgressBar'
+import { SearchButton } from './Button/SearchButton'
 import { SettingsButton } from './Button/SettingsButton'
 import { SyncButton } from './Button/SyncButton'
 import { UserButton } from './Button/UserButton'
@@ -46,6 +47,7 @@ export const Sidebar = () => {
       )}
       {activeRepo && <SyncButton />}
       {loggedIn && <SettingsButton />}
+      {loggedIn && <SearchButton />}
       {loggedIn && <FileTreeContainer />}
     </Stack>
   )
