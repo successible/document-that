@@ -19,6 +19,7 @@ specifiers:
   '@types/color': 3.0.3
   '@types/flat': 5.0.2
   '@types/lodash': 4.14.191
+  '@types/lunr': ^2.3.4
   '@types/ms': 0.7.31
   '@types/node': 18.11.17
   '@types/react': 18.0.26
@@ -39,6 +40,7 @@ specifiers:
   isomorphic-git: 1.21.0
   kill-port-process: 3.1.0
   lodash: 4.17.21
+  lunr: 2.3.9
   monaco-editor: 0.34.1
   ms: 2.1.3
   next: 13.1.1
@@ -80,6 +82,7 @@ dependencies:
   immer: 9.0.16
   isomorphic-git: 1.21.0
   lodash: 4.17.21
+  lunr: 2.3.9
   monaco-editor: 0.34.1
   ms: 2.1.3
   next: 13.1.1_7xlrwlvvs7cv2obrs6a5y6oxxq
@@ -101,6 +104,7 @@ devDependencies:
   '@types/color': 3.0.3
   '@types/flat': 5.0.2
   '@types/lodash': 4.14.191
+  '@types/lunr': 2.3.4
   '@types/ms': 0.7.31
   '@types/node': 18.11.17
   '@types/react': 18.0.26
@@ -1196,6 +1200,10 @@ packages:
 
   /@types/lodash/4.14.191:
     resolution: {integrity: sha512-BdZ5BCCvho3EIXw6wUCXHe7rS53AIDPLE+JzwgT+OsJk53oBfbSmZZ7CX4VaRoN78N+TJpFi9QPlfIVNmJYWxQ==}
+    dev: true
+
+  /@types/lunr/2.3.4:
+    resolution: {integrity: sha512-j4x4XJwZvorEUbA519VdQ5b9AOU9TSvfi8tvxMAfP8XzNLtFex7A8vFQwqOx3WACbV0KMXbACV3cZl4/gynQ7g==}
     dev: true
 
   /@types/mdast/3.0.10:
@@ -3251,6 +3259,10 @@ packages:
     engines: {node: '>=10'}
     dependencies:
       yallist: 4.0.0
+
+  /lunr/2.3.9:
+    resolution: {integrity: sha512-zTU3DaZaF3Rt9rhN3uBMGQD3dD2/vFQqnvZCDv4dl5iOzq2IZQqTxu90r4E5J+nP70J3ilqVCrbho2eWaeW8Ow==}
+    dev: false
 
   /mdast-util-definitions/5.1.1:
     resolution: {integrity: sha512-rQ+Gv7mHttxHOBx2dkF4HWTg+EE+UR78ptQWDylzPKaQuVGdG4HIoY3SrS/pCp80nZ04greFvXbVFHT+uf0JVQ==}
