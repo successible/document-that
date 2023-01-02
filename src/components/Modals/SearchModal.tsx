@@ -58,84 +58,92 @@ export const SearchModal = () => {
         </form>
         <Stack spacing={0}>
           {Object.keys(matches).map((key) => {
+            const content = matches[key].content
+            const groups = matches[key].matches.flatMap((match) => {
+              // @ts-ignore - TypeScript does not recognize the d flag
+              const group = match.indices[0] as [number, number]
+              return [group]
+            })
+
+            type Mode = 'group' | 'no-group'
+            type Chunks = { mode: Mode; text: string; line: number }[]
+            const groupedDocument = [] as Chunks
+            let mode = 'group' as Mode
+            let line = 0
+
+            // Let us loop through every character to split it into group or not group
+            content.split('').map((char, i) => {
+              // What line are we on?
+              if (char === '\n') {
+                line += 1
+              }
+
+              // Is the character in a group?
+              let inGroup = false
+              groups.forEach((group) => {
+                const [groupStart, groupEnd] = group
+                if (i >= groupStart && i < groupEnd) {
+                  inGroup = true
+                }
+              })
+
+              // Create the first chunk
+              if (groupedDocument.length === 0) {
+                mode = inGroup ? 'group' : 'no-group'
+                groupedDocument.push({ line, mode, text: '' })
+              }
+
+              // If the mode has changed, create a new chunk
+              if (mode === 'group' && !inGroup) {
+                mode = 'no-group'
+                groupedDocument.push({ line, mode, text: '' })
+              } else if (mode === 'no-group' && inGroup) {
+                mode = 'group'
+                groupedDocument.push({ line, mode, text: '' })
+              }
+
+              // Add the next character to the text of the current chunk
+              groupedDocument.slice(-1)[0].text += char
+            })
+
+            console.log(groupedDocument)
+
             return (
               <>
-                <Group mt={10} mb={0}>
+                <Group mt={10} mb={10}>
                   {key.split('/').slice(2).join('/')}
                 </Group>
-                {matches[key].matches.flatMap((match) => {
-                  // @ts-ignore - TypeScript does not recognize the d flag
-                  const indices = match.indices as [number, number][]
-                  // We need to treat the start of the line as index 0
-                  // So [27, 75] needs to be [0, 50] in the eyes of the capturing group
-                  const [lineStart] = indices[0]
-                  const groups = indices.slice(1).map((group) => {
-                    const [groupStart, groupEnd] = group
-                    return [groupStart - lineStart, groupEnd - lineStart]
-                  })
+                <Box>
+                  {groupedDocument.map((chunk) => {
+                    return (
+                      <>
+                        {chunk.mode === 'group' ? (
+                          <Box
+                            sx={{
+                              backgroundColor: colors.button.primary,
+                              borderRadius: '5px',
+                              color: colors.text,
+                              display: 'inline',
+                              fontWeight: 700,
+                              padding: '2px 4px',
+                              whiteSpace: 'pre-wrap',
+                            }}
+                          >
+                            {chunk.text}
+                          </Box>
+                        ) : (
+                          <Box
+                            sx={{ display: 'inline', whiteSpace: 'pre-wrap' }}
+                          >
+                            {chunk.text}
+                          </Box>
+                        )}
+                      </>
+                    )
+                  })}
+                </Box>
 
-                  type Mode = 'group' | 'no-group'
-                  type Chunks = { mode: Mode; text: string }[]
-                  const groupedLine = [] as Chunks
-                  let mode = 'group' as Mode
-                  // Let us loop through every character to split it into group or not group
-                  match[0].split('').map((char, i) => {
-                    // Is the character in a group?
-                    let inGroup = false
-                    groups.forEach((group) => {
-                      const [groupStart, groupEnd] = group
-                      if (i >= groupStart && i < groupEnd) {
-                        inGroup = true
-                      }
-                    })
-
-                    // Create the first chunk
-                    if (groupedLine.length === 0) {
-                      mode = inGroup ? 'group' : 'no-group'
-                      groupedLine.push({ mode, text: '' })
-                    }
-
-                    // If the mode has changed, create a new chunk
-                    if (mode === 'group' && !inGroup) {
-                      mode = 'no-group'
-                      groupedLine.push({ mode, text: '' })
-                    } else if (mode === 'no-group' && inGroup) {
-                      mode = 'group'
-                      groupedLine.push({ mode, text: '' })
-                    }
-
-                    // Add the next character to the text of the current chunk
-                    groupedLine.slice(-1)[0].text += char
-                  })
-
-                  return (
-                    <Box mt={10} mb={10} id={match[0] + match[1]}>
-                      {groupedLine.map((chunk) => {
-                        return (
-                          <>
-                            {chunk.mode === 'group' ? (
-                              <Box
-                                sx={{
-                                  backgroundColor: colors.button.primary,
-                                  borderRadius: '5px',
-                                  color: colors.text,
-                                  display: 'inline',
-                                  fontWeight: 700,
-                                  padding: '2px 4px',
-                                }}
-                              >
-                                {chunk.text}
-                              </Box>
-                            ) : (
-                              <Box sx={{ display: 'inline' }}>{chunk.text}</Box>
-                            )}
-                          </>
-                        )
-                      })}
-                    </Box>
-                  )
-                })}
-                <Divider />
+                <Divider mt={20} />
               </>
             )
           })}
