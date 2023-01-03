@@ -11,7 +11,7 @@ import { MOBILE_WIDTH } from '../../helpers/utils/isMobile'
 import { useStore } from '../../store/store'
 import { getWikiMarkdownLanguage } from '../../theme/language'
 import { getTheme } from '../../theme/theme'
-import { SidebarAlert } from './Alerts/SidebarAlert'
+import { SidebarAlert } from './Common/Alerts/SidebarAlert'
 
 export const FilePanel = () => {
   const methods = useStore((state) => state.methods)
