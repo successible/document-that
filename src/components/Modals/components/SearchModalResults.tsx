@@ -1,4 +1,11 @@
-import { Box, Button, Divider, Group, Stack } from '@mantine/core'
+import {
+  Box,
+  Button,
+  Divider,
+  Group,
+  Stack,
+  UnstyledButton,
+} from '@mantine/core'
 
 import { groupBy } from 'lodash'
 import { Updater } from 'use-immer'
@@ -33,7 +40,7 @@ export const SearchModalResults: React.FC<props> = ({
         const chunksGroupedByLine = groupBy(linesAsChunks, 'lineNumber')
 
         return (
-          <>
+          <Box key={path}>
             <Divider mt={10} />
             <Group mt={20} mb={10}>
               <Button
@@ -53,16 +60,33 @@ export const SearchModalResults: React.FC<props> = ({
               {Object.keys(chunksGroupedByLine).flatMap((line) => {
                 const chunks = chunksGroupedByLine[line]
                 return (
-                  <Box
+                  <UnstyledButton
+                    onClick={async () => {
+                      const file = await readFile(path)
+                      methods.setOpenSearch(false)
+                      setMatches({})
+                      methods.setActiveFile({
+                        content: file,
+                        line: Number(line),
+                        path,
+                      })
+                    }}
+                    key={path + line}
                     mt={10}
                     mb={10}
                     sx={{
+                      '&:hover, &:active': {
+                        backgroundColor: colors.foreground,
+                      },
+                      borderRadius: 5,
+                      lineHeight: '1.6',
+                      padding: '2px 10px',
                       width: '100%',
                     }}
                   >
-                    {chunks.map((chunk) => {
+                    {chunks.map((chunk, i) => {
                       return (
-                        <>
+                        <Box sx={{ display: 'inline' }} key={i}>
                           {chunk.mode === 'in-match' ? (
                             <Box
                               sx={{
@@ -79,14 +103,14 @@ export const SearchModalResults: React.FC<props> = ({
                           ) : (
                             <Box sx={{ display: 'inline' }}>{chunk.text}</Box>
                           )}
-                        </>
+                        </Box>
                       )
                     })}
-                  </Box>
+                  </UnstyledButton>
                 )
               })}
             </Box>
-          </>
+          </Box>
         )
       })}
     </Stack>

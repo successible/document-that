@@ -42,7 +42,7 @@ export type Tab = {
 
 export type FileTree = Record<string, Folder | File>
 
-export type FileContent = { path: string; content: string }
+export type FileContent = { path: string; content: string; line?: number }
 
 export type ActiveData = {
   file: FileContent | null

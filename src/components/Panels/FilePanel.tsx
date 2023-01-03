@@ -1,6 +1,7 @@
 import { Alert, Box, Stack, Text, Title } from '@mantine/core'
 import { useViewportSize } from '@mantine/hooks'
-import Editor, { Monaco } from '@monaco-editor/react'
+import Editor, { Monaco, useMonaco } from '@monaco-editor/react'
+import produce from 'immer'
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api'
 import { MutableRefObject, useEffect, useRef } from 'react'
 import { AlertCircle } from 'tabler-icons-react'
@@ -19,10 +20,13 @@ export const FilePanel = () => {
   const data = useStore((state) => state.data)
   const editorOptions = useStore((state) => state.editorOptions)
   const sidebarOpen = useStore((state) => state.openSidebar)
+  const monacoObject = useMonaco()
 
   const activeRepo = useStore((state) => state.activeRepo)
-  const activeFile = getActiveData(activeRepo, data).file
+  const activeData = getActiveData(activeRepo, data)
+  const activeFile = activeData.file
   const path = activeFile?.path
+  const line = activeFile?.line
   const fileContent = activeFile?.content || ''
   const [text, setText] = useImmer(fileContent)
 
@@ -33,6 +37,9 @@ export const FilePanel = () => {
   useEffect(() => {
     setText(fileContent)
   }, [fileContent, setText])
+
+  // This useEffect handles the cursor focus
+  // That occurs toggling between rich text mode and plain text mode
 
   useEffect(() => {
     const editor = editorRef.current
@@ -56,6 +63,40 @@ export const FilePanel = () => {
       }
     }
   }, [activeFile?.path, editorOptions.richText])
+
+  // This useEffect handles the highlighting
+  // That occurs after searching a line
+
+  useEffect(() => {
+    const editor = editorRef.current
+    if (line !== undefined && line !== null && editor && monacoObject) {
+      const lengthOfLine = fileContent.split('\n')[line].length
+      setTimeout(() => {
+        editor.setSelection(
+          // Lines and columns in VS Code are not 0-indexed. Instead, they are 1-indexed
+          new monacoObject.Selection(line + 1, 0, line + 1, lengthOfLine + 1)
+        )
+      }, 0)
+
+      // Once the term has been highlighted, we want to remove the line from activeData
+      // That way when you return to the page, the term does not stay highlighted
+      const newData = produce(data, (draft) => {
+        const file = getActiveData(activeRepo, draft).file
+        if (file) {
+          file.line = undefined
+        }
+      })
+      methods.setData(newData)
+    }
+  }, [
+    activeFile?.line,
+    activeRepo,
+    data,
+    line,
+    methods,
+    monacoObject,
+    fileContent,
+  ])
 
   const isBinary = fileContent.includes('�') || path?.includes('.svg')
   const { width } = useViewportSize()
