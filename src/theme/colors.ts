@@ -7,6 +7,7 @@ export type Colors = {
   background: string
   bold: string
   button: {
+    accent: string
     danger: string
     primary: string
     secondary: string
@@ -18,7 +19,9 @@ export type Colors = {
   divider: string
   emphasis: string
   foreground: string
+  accent: string
   heading: string
+  highlight: string
   link: {
     body: string
     url: string
@@ -32,11 +35,13 @@ export type Colors = {
 }
 
 export const defaultColors: Colors = {
+  accent: '#6272a4',
   background: '#282a36',
   bold: '#ffb86c',
   button: {
+    accent: '#6272a4',
     danger: '#ff5555',
-    neutral: '#343a40',
+    neutral: '#44475a',
     primary: '#bd93f9',
     secondary: '#ff79c6',
     success: '#3dc9b0',
@@ -47,6 +52,7 @@ export const defaultColors: Colors = {
   emphasis: '#8be9fd',
   foreground: '#44475a',
   heading: '#bd93f9',
+  highlight: '#44475a',
   link: {
     body: '#ff79c6',
     url: '#8be9fd',

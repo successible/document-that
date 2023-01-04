@@ -51,9 +51,7 @@ export const Tabs = () => {
     >
       {activeData.tabs.map((tab) => {
         const activeTab = activeData.file?.path === tab.path
-        const activeButtonColor = activeTab
-          ? colors.button.neutral
-          : colors.button.neutral
+        const activeButtonColor = colors.button.neutral
 
         const flattedFileTree = flatten(
           // We exclude the top level key.
@@ -77,7 +75,9 @@ export const Tabs = () => {
             noWrap
             sx={{
               border: '2px solid transparent',
-              borderColor: activeTab ? colors.comment : colors.button.neutral,
+              borderColor: activeTab
+                ? colors.button.success
+                : colors.button.neutral,
               borderRadius: 5,
             }}
           >

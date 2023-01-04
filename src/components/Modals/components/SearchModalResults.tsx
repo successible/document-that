@@ -44,7 +44,7 @@ export const SearchModalResults: React.FC<props> = ({
             <Divider mt={10} />
             <Group mt={20} mb={10}>
               <Button
-                sx={{ ...styleButton(colors.button.neutral), fontSize: 16 }}
+                sx={{ ...styleButton(colors.foreground), fontSize: 16 }}
                 onClick={async () => {
                   const file = await readFile(path)
                   methods.setOpenSearch(false)

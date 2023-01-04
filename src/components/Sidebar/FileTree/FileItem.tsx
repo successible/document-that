@@ -83,7 +83,7 @@ export const FileItem: React.FC<props> = ({ file, fullPath, name }) => {
               backgroundColor: colors.foreground,
             },
             backgroundColor: selectedFile
-              ? `${colors.comment} !important`
+              ? `${colors.accent} !important`
               : undefined,
             border: '2px solid transparent',
             borderRadius: 5,

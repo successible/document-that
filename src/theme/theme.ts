@@ -8,7 +8,14 @@ export const getTheme = (
     base: 'vs-dark',
     colors: {
       'editor.background': colors.background,
+      // Search (with cmd + f or ctrl + f)
+      'editor.findMatchBackground': colors.comment,
+      'editor.findMatchHighlightBackground': colors.comment,
       'editor.foreground': colors.text,
+      // Highlighting or selecting rows
+      'editor.inactiveSelectionBackground': colors.highlight,
+      'editor.selectionBackground': colors.highlight,
+      'editor.selectionHighlightBackground': colors.highlight,
     },
     inherit: true,
     rules: [
