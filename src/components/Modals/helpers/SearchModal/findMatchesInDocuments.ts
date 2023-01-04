@@ -1,3 +1,4 @@
+import { toast } from 'react-hot-toast'
 import { getPathInFileSystem } from '../../../../helpers/fs/getPathInFileSystem'
 import { readFile } from '../../../../helpers/fs/readFile'
 import { Repo } from '../../../../pages'
@@ -24,13 +25,18 @@ export const findMatchesInDocuments = async (
       const path = getPathInFileSystem(activeRepo, fileInfo[0].split('/'))
       const content = await readFile(path)
       const flags = 'gmd'
-      const matches = Array.from(
-        content.matchAll(
-          new RegExp(`${term}`, caseSensitive ? flags : flags + 'i')
+      try {
+        const matches = Array.from(
+          content.matchAll(
+            new RegExp(`${term}`, caseSensitive ? flags : flags + 'i')
+          )
         )
-      )
-      if (matches.length > 0) {
-        documents[path] = { content, matches, path }
+        if (matches.length > 0) {
+          documents[path] = { content, matches, path }
+        }
+      } catch (e) {
+        toast.error(String(e))
+        break
       }
     }
   }

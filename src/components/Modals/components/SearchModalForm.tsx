@@ -37,7 +37,7 @@ export const SearchModalForm: React.FC<props> = ({ setMatches }) => {
       >
         <TextInput
           mb={10}
-          placeholder="Text to search"
+          placeholder="Text or regex to search"
           value={text}
           onChange={(e) => setText(e.target.value)}
         />

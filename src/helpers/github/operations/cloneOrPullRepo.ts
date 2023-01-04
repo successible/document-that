@@ -170,8 +170,6 @@ export const cloneOrPullRepo = async (
       ref: 'main',
     })
 
-    console.log(localLatestCommitHash)
-
     const remoteInfo = await git.getRemoteInfo({
       ...getProperties(accessToken, activeRepo, user),
       url: getProxyUrl(activeRepo),
