@@ -1,4 +1,4 @@
-import { Box, Button, TextInput } from '@mantine/core'
+import { Box, Button, Checkbox, TextInput } from '@mantine/core'
 import { Updater, useImmer } from 'use-immer'
 import { getActiveData } from '../../../helpers/fs/getActiveData'
 import { styleButton } from '../../../helpers/utils/theme/styleButton'
@@ -12,6 +12,7 @@ type props = { setMatches: Updater<Matches> }
 
 export const SearchModalForm: React.FC<props> = ({ setMatches }) => {
   const [text, setText] = useImmer('')
+  const [caseSensitive, setCaseSensitive] = useImmer(false)
 
   const colors = useStore((state) => state.colors)
   const activeRepo = useStore((state) => state.activeRepo)
@@ -19,7 +20,7 @@ export const SearchModalForm: React.FC<props> = ({ setMatches }) => {
   const activeData = getActiveData(activeRepo, data)
 
   return (
-    <Box mb={30}>
+    <Box mb={10}>
       <form
         onSubmit={async (e) => {
           e.preventDefault()
@@ -27,7 +28,8 @@ export const SearchModalForm: React.FC<props> = ({ setMatches }) => {
             const matches = await findMatchesInDocuments(
               activeData.files,
               activeRepo,
-              text
+              text,
+              { caseSensitive }
             )
             setMatches(matches)
           }
@@ -38,6 +40,13 @@ export const SearchModalForm: React.FC<props> = ({ setMatches }) => {
           placeholder="Text to search"
           value={text}
           onChange={(e) => setText(e.target.value)}
+        />
+        <Checkbox
+          checked={caseSensitive}
+          onChange={(e) => setCaseSensitive(e.currentTarget.checked)}
+          mt={20}
+          mb={20}
+          label="Case sensitive"
         />
         <Button
           mt={5}
