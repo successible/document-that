@@ -1,4 +1,4 @@
-import { Box, Button, Checkbox, TextInput } from '@mantine/core'
+import { Box, Button, Checkbox, Loader, TextInput } from '@mantine/core'
 import { Updater, useImmer } from 'use-immer'
 import { getActiveData } from '../../../helpers/fs/getActiveData'
 import { styleButton } from '../../../helpers/utils/theme/styleButton'
@@ -9,10 +9,12 @@ import {
 } from '../helpers/SearchModal/findMatchesInDocuments'
 
 type props = { setMatches: Updater<Matches> }
+type STATUS = 'ACTIVE' | 'INACTIVE' | 'LOADING'
 
 export const SearchModalForm: React.FC<props> = ({ setMatches }) => {
   const [text, setText] = useImmer('')
   const [caseSensitive, setCaseSensitive] = useImmer(false)
+  const [status, setStatus] = useImmer('INACTIVE' as STATUS)
 
   const colors = useStore((state) => state.colors)
   const activeRepo = useStore((state) => state.activeRepo)
@@ -24,14 +26,24 @@ export const SearchModalForm: React.FC<props> = ({ setMatches }) => {
       <form
         onSubmit={async (e) => {
           e.preventDefault()
-          if (activeRepo && text && text !== '') {
-            const matches = await findMatchesInDocuments(
-              activeData.files,
-              activeRepo,
-              text,
-              { caseSensitive }
-            )
-            setMatches(matches)
+          if (status === 'INACTIVE') {
+            if (activeRepo && text && text !== '') {
+              const matchesPromise = findMatchesInDocuments(
+                activeData.files,
+                activeRepo,
+                text,
+                { caseSensitive }
+              )
+              setStatus('LOADING')
+              const matches = await matchesPromise
+              setStatus('ACTIVE')
+              setMatches(matches)
+            }
+          } else if (status === 'ACTIVE') {
+            setText('')
+            setStatus('INACTIVE')
+            setMatches({})
+            setCaseSensitive(false)
           }
         }}
       >
@@ -53,7 +65,16 @@ export const SearchModalForm: React.FC<props> = ({ setMatches }) => {
           sx={{ ...styleButton(colors.button.primary) }}
           type="submit"
         >
-          Search
+          {status === 'ACTIVE' ? (
+            'Clear'
+          ) : status === 'INACTIVE' ? (
+            'Search'
+          ) : (
+            <>
+              <Loader variant={'dots'} color={'white'} mr={10} size={'sm'} />{' '}
+              Searching
+            </>
+          )}
         </Button>
       </form>
     </Box>
