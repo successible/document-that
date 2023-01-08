@@ -1,8 +1,8 @@
 import { Group, Stack } from '@mantine/core'
-import { useViewportSize } from '@mantine/hooks'
-import { useHotkeys } from '@mantine/hooks'
+import { getHotkeyHandler, useViewportSize } from '@mantine/hooks'
 import { RestEndpointMethodTypes } from '@octokit/rest'
 import React, { useEffect } from 'react'
+import { toast } from 'react-hot-toast'
 import { Modals } from '../components/Modals/Modals'
 import { MainPanel } from '../components/Panels/MainPanel'
 import { Sidebar } from '../components/Sidebar/Sidebar'
@@ -29,6 +29,7 @@ const Index = () => {
   const user = useStore((state) => state.user)
   const data = useStore((state) => state.data)
   const methods = useStore((state) => state.methods)
+  const editorOptions = useStore((state) => state.editorOptions)
 
   // Why: https://gist.github.com/meotimdihia/9faec94a4b223932143cd81a19058f05
   const { mounted } = useMounted()
@@ -47,7 +48,24 @@ const Index = () => {
   usePullOrCloneRepo()
   useFetchDataFromGit(data, accessToken, activeRepo, user, methods)
 
-  useHotkeys([['mod+p', () => methods.setOpenNameSearch(true)]])
+  useEffect(() => {
+    const handler = getHotkeyHandler([
+      ['mod+p', () => methods.setOpenNameSearch(true)],
+      // // We want to disable the browser's default save behavior
+      ['mod+s', () => toast.success('File saved')],
+      [
+        'mod+m',
+        () =>
+          methods.setEditorOptions({
+            ...editorOptions,
+            richText: !editorOptions.richText,
+          }),
+      ],
+    ])
+
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [editorOptions, methods])
 
   return (
     <Stack spacing={0}>

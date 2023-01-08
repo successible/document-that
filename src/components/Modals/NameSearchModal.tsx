@@ -71,31 +71,33 @@ export const NameSearchModal = () => {
         }}
         placeholder={'Search for file by name'}
       />
-      {matches.length >= 1 && <Divider mt={20} />}
-      <Stack mt={20}>
-        {matches.map((match) => (
-          <UnstyledButton
-            key={match}
-            onClick={async () => {
-              const path = getPathInFileSystem(activeRepo, match.split('/'))
-              const file = await readFile(path)
-
-              methods.setActiveFile({ content: file, path })
-
-              methods.setOpenNameSearch(false)
-              setText('')
-              setMatches([])
-            }}
-          >
-            <Group>
-              <Text>{match.split('/').slice(-1)[0]}</Text>
-              <Text sx={{ color: colors.accent, fontSize: '16px' }}>
-                {match.split('/').slice(0, -1).join('/')}
-              </Text>
-            </Group>
-          </UnstyledButton>
-        ))}
-      </Stack>
+      {matches.length >= 1 && (
+        <>
+          <Divider mt={20} />
+          <Stack mt={20}>
+            {matches.map((match) => (
+              <UnstyledButton
+                key={match}
+                onClick={async () => {
+                  const path = getPathInFileSystem(activeRepo, match.split('/'))
+                  const file = await readFile(path)
+                  methods.setActiveFile({ content: file, path })
+                  methods.setOpenNameSearch(false)
+                  setText('')
+                  setMatches([])
+                }}
+              >
+                <Group>
+                  <Text>{match.split('/').slice(-1)[0]}</Text>
+                  <Text sx={{ color: colors.accent, fontSize: '16px' }}>
+                    {match.split('/').slice(0, -1).join('/')}
+                  </Text>
+                </Group>
+              </UnstyledButton>
+            ))}
+          </Stack>
+        </>
+      )}
     </Modal>
   )
 }

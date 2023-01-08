@@ -4,6 +4,7 @@ import Editor, { Monaco, useMonaco } from '@monaco-editor/react'
 import produce from 'immer'
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api'
 import { MutableRefObject, useEffect, useRef } from 'react'
+import { toast } from 'react-hot-toast'
 import { AlertCircle } from 'tabler-icons-react'
 import { useImmer } from 'use-immer'
 import { getActiveData } from '../../helpers/fs/getActiveData'
@@ -186,9 +187,31 @@ export const FilePanel = () => {
                         monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyP,
                       ],
                       label: 'Search files by name',
-                      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                      run: (editor) => {
+                      run: () => {
                         methods.setOpenNameSearch(true)
+                      },
+                    })
+                    editor.addAction({
+                      id: 'save-file',
+                      keybindings: [
+                        monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS,
+                      ],
+                      label: 'Save file',
+                      run: () => {
+                        toast.success('File saved')
+                      },
+                    })
+                    editor.addAction({
+                      id: 'change-editor-mode',
+                      keybindings: [
+                        monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyM,
+                      ],
+                      label: 'Change editor mode',
+                      run: () => {
+                        methods.setEditorOptions({
+                          ...editorOptions,
+                          richText: !editorOptions.richText,
+                        })
                       },
                     })
                   }
