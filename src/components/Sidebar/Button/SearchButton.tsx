@@ -16,7 +16,7 @@ export const SearchButton = () => {
         width: '100%',
       }}
       onClick={async () => {
-        methods.setOpenSearch(true)
+        methods.setOpenDocumentSearch(true)
       }}
     >
       Search

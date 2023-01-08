@@ -124,7 +124,7 @@ export const FilePanel = () => {
               mb={20}
               title="This is a binary file"
             >
-              These include images and PDFs
+              For example, an image or PDF.
             </Alert>
           </Stack>
         ) : (
@@ -174,8 +174,24 @@ export const FilePanel = () => {
                   )
                 }}
                 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                onMount={(editor: any, monaco: Monaco) => {
+                onMount={(
+                  editor: monaco.editor.IStandaloneCodeEditor | null,
+                  monaco: Monaco
+                ) => {
                   editorRef.current = editor
+                  if (editor) {
+                    editor.addAction({
+                      id: 'search-files-by-name',
+                      keybindings: [
+                        monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyP,
+                      ],
+                      label: 'Search files by name',
+                      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                      run: (editor) => {
+                        methods.setOpenNameSearch(true)
+                      },
+                    })
+                  }
                 }}
               />
             ) : (

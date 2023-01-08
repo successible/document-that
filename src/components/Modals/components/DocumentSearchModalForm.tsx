@@ -11,7 +11,7 @@ import {
 type props = { setMatches: Updater<Matches> }
 type STATUS = 'ACTIVE' | 'INACTIVE' | 'LOADING'
 
-export const SearchModalForm: React.FC<props> = ({ setMatches }) => {
+export const DocumentSearchModalForm: React.FC<props> = ({ setMatches }) => {
   const [text, setText] = useImmer('')
   const [caseSensitive, setCaseSensitive] = useImmer(false)
   const [status, setStatus] = useImmer('INACTIVE' as STATUS)
@@ -58,7 +58,7 @@ export const SearchModalForm: React.FC<props> = ({ setMatches }) => {
           onChange={(e) => setCaseSensitive(e.currentTarget.checked)}
           mt={20}
           mb={20}
-          label="Case sensitive"
+          label="Make case sensitive"
         />
         <Button
           mt={5}

@@ -1,5 +1,6 @@
 import { Group, Stack } from '@mantine/core'
 import { useViewportSize } from '@mantine/hooks'
+import { useHotkeys } from '@mantine/hooks'
 import { RestEndpointMethodTypes } from '@octokit/rest'
 import React, { useEffect } from 'react'
 import { Modals } from '../components/Modals/Modals'
@@ -45,6 +46,8 @@ const Index = () => {
   useFetchDataFromGitHub()
   usePullOrCloneRepo()
   useFetchDataFromGit(data, accessToken, activeRepo, user, methods)
+
+  useHotkeys([['mod+p', () => methods.setOpenNameSearch(true)]])
 
   return (
     <Stack spacing={0}>

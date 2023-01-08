@@ -19,7 +19,7 @@ import { splitContentIntoLines } from '../helpers/SearchModal/splitContentIntoLi
 import { splitLinesIntoChunks } from '../helpers/SearchModal/splitLinesIntoChunks'
 
 type props = { matches: Matches; setMatches: Updater<Matches> }
-export const SearchModalResults: React.FC<props> = ({
+export const DocumentSearchModalResults: React.FC<props> = ({
   matches,
   setMatches,
 }) => {
@@ -47,7 +47,7 @@ export const SearchModalResults: React.FC<props> = ({
                 sx={{ ...styleButton(colors.foreground), fontSize: 16 }}
                 onClick={async () => {
                   const file = await readFile(path)
-                  methods.setOpenSearch(false)
+                  methods.setOpenDocumentSearch(false)
                   setMatches({})
                   methods.setActiveFile({ content: file, path })
                 }}
@@ -63,7 +63,7 @@ export const SearchModalResults: React.FC<props> = ({
                   <UnstyledButton
                     onClick={async () => {
                       const file = await readFile(path)
-                      methods.setOpenSearch(false)
+                      methods.setOpenDocumentSearch(false)
                       setMatches({})
                       methods.setActiveFile({
                         content: file,

@@ -1,12 +1,14 @@
 import { CreateFolderProgressModal } from './CreateFolderProgressModal'
 import { DeleteFolderProgressModal } from './DeleteFolderProgressModal'
-import { SearchModal } from './SearchModal'
+import { DocumentSearchModal } from './DocumentSearchModal'
+import { NameSearchModal } from './NameSearchModal'
 import { SettingsModal } from './SettingsModal'
 
 export const Modals = () => {
   return (
     <>
-      <SearchModal />
+      <DocumentSearchModal />
+      <NameSearchModal />
       <SettingsModal />
       <CreateFolderProgressModal />
       <DeleteFolderProgressModal />

@@ -66,6 +66,7 @@
     "fastify": "4.11.0",
     "file-icons-js": "1.1.0",
     "flat": "5.0.2",
+    "fuse.js": "6.6.2",
     "immer": "9.0.17",
     "isomorphic-git": "1.21.0",
     "lodash": "4.17.21",
