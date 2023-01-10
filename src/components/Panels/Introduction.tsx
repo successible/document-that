@@ -13,7 +13,7 @@ import {
 import { AlertCircle } from 'tabler-icons-react'
 import { useImmer } from 'use-immer'
 import { useStore } from '../../store/store'
-import { SidebarAlert } from './Common/Alerts/SidebarAlert'
+import { SidebarAlert } from './Common/SidebarAlert'
 
 export const Introduction = () => {
   const [localAccessToken, setLocalAccessToken] = useImmer('')

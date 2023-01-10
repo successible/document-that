@@ -1,9 +1,9 @@
 import { Modal, Title } from '@mantine/core'
 import { useImmer } from 'use-immer'
 import { useStore } from '../../store/store'
-import { DocumentSearchModalForm } from './components/DocumentSearchModalForm'
-import { DocumentSearchModalResults } from './components/DocumentSearchModalResults'
-import { Matches } from './helpers/SearchModal/findMatchesInDocuments'
+import { DocumentSearchModalForm } from './DocumentSearchModal/components/DocumentSearchModalForm'
+import { DocumentSearchModalResults } from './DocumentSearchModal/components/DocumentSearchModalResults'
+import { Matches } from './SearchModal/helpers/findMatchesInDocuments'
 
 export const DocumentSearchModal = () => {
   const [matches, setMatches] = useImmer({} as Matches)

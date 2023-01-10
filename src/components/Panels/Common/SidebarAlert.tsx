@@ -1,5 +1,5 @@
 import { Alert, Burger } from '@mantine/core'
-import { useStore } from '../../../../store/store'
+import { useStore } from '../../../store/store'
 
 export const SidebarAlert = () => {
   const sidebarOpen = useStore((state) => state.openSidebar)

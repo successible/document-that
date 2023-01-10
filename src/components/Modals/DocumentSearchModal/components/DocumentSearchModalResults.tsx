@@ -9,14 +9,14 @@ import {
 
 import { groupBy } from 'lodash'
 import { Updater } from 'use-immer'
-import { readFile } from '../../../helpers/fs/readFile'
-import { styleButton } from '../../../helpers/utils/theme/styleButton'
-import { useStore } from '../../../store/store'
-import { Matches } from '../helpers/SearchModal/findMatchesInDocuments'
-import { getMatchIndices } from '../helpers/SearchModal/getMatchIndices'
-import { removeLinesWithoutMatch } from '../helpers/SearchModal/removeLinesWithoutMatch'
-import { splitContentIntoLines } from '../helpers/SearchModal/splitContentIntoLines'
-import { splitLinesIntoChunks } from '../helpers/SearchModal/splitLinesIntoChunks'
+import { readFile } from '../../../../helpers/fs/readFile'
+import { styleButton } from '../../../../helpers/utils/theme/styleButton'
+import { useStore } from '../../../../store/store'
+import { Matches } from '../../SearchModal/helpers/findMatchesInDocuments'
+import { getMatchIndices } from '../../SearchModal/helpers/getMatchIndices'
+import { removeLinesWithoutMatch } from '../../SearchModal/helpers/removeLinesWithoutMatch'
+import { splitContentIntoLines } from '../../SearchModal/helpers/splitContentIntoLines'
+import { splitLinesIntoChunks } from '../../SearchModal/helpers/splitLinesIntoChunks'
 
 type props = { matches: Matches; setMatches: Updater<Matches> }
 export const DocumentSearchModalResults: React.FC<props> = ({

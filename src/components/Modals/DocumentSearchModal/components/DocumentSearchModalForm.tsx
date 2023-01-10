@@ -1,12 +1,12 @@
 import { Box, Button, Checkbox, Loader, TextInput } from '@mantine/core'
 import { Updater, useImmer } from 'use-immer'
-import { getActiveData } from '../../../helpers/fs/getActiveData'
-import { styleButton } from '../../../helpers/utils/theme/styleButton'
-import { useStore } from '../../../store/store'
+import { getActiveData } from '../../../../helpers/fs/getActiveData'
+import { styleButton } from '../../../../helpers/utils/theme/styleButton'
+import { useStore } from '../../../../store/store'
 import {
   findMatchesInDocuments,
   Matches,
-} from '../helpers/SearchModal/findMatchesInDocuments'
+} from '../../SearchModal/helpers/findMatchesInDocuments'
 
 type props = { setMatches: Updater<Matches> }
 type STATUS = 'ACTIVE' | 'INACTIVE' | 'LOADING'
