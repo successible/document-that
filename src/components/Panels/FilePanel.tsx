@@ -1,11 +1,12 @@
-import { Alert, Box, Stack, Text, Title } from '@mantine/core'
+/* eslint-disable @next/next/no-img-element */
+import { Box, Stack, Text, Title } from '@mantine/core'
 import { useViewportSize } from '@mantine/hooks'
 import Editor, { Monaco, useMonaco } from '@monaco-editor/react'
 import produce from 'immer'
+import isTextPath from 'is-text-path'
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api'
 import { MutableRefObject, useEffect, useRef } from 'react'
 import { toast } from 'react-hot-toast'
-import { AlertCircle } from 'tabler-icons-react'
 import { useImmer } from 'use-immer'
 import { getActiveData } from '../../helpers/fs/getActiveData'
 import { writeFile } from '../../helpers/fs/writeFile'
@@ -29,6 +30,8 @@ export const FilePanel = () => {
   const path = activeFile?.path
   const line = activeFile?.line
   const fileContent = activeFile?.content || ''
+  console.log(fileContent)
+
   const [text, setText] = useImmer(fileContent)
 
   const editorRef = useRef(null) as
@@ -37,7 +40,7 @@ export const FilePanel = () => {
 
   useEffect(() => {
     setText(fileContent)
-  }, [fileContent, setText])
+  }, [fileContent, path, setText])
 
   // This useEffect handles the cursor focus
   // That occurs toggling between rich text mode and plain text mode
@@ -99,7 +102,9 @@ export const FilePanel = () => {
     fileContent,
   ])
 
-  const isBinary = fileContent.includes('�') || path?.includes('.svg')
+  const isBinary = !isTextPath(path || '') || path?.includes('.svg')
+  const isPDF = path?.includes('.pdf')
+
   const { width } = useViewportSize()
 
   // 700px to 800px seems a good rule of thumb for readability
@@ -116,17 +121,29 @@ export const FilePanel = () => {
             sx={{
               height: '100%',
               margin: '0px auto',
-              maxWidth: 500,
-              width: '90%',
+              maxWidth: isPDF ? undefined : 500,
+              width: isPDF ? '100%' : '90%',
             }}
           >
-            <Alert
-              icon={<AlertCircle size={16} />}
-              mb={20}
-              title="This is a binary file"
-            >
-              For example, an image or PDF.
-            </Alert>
+            {path?.includes('.pdf') ? (
+              <Box
+                sx={{
+                  height: '100%',
+                  iframe: {
+                    height: '100%',
+                    width: '100%',
+                  },
+                  width: '100%',
+                }}
+              >
+                <iframe src={fileContent} />
+              </Box>
+            ) : (
+              <img
+                src={fileContent}
+                alt={(path || '').split('/').slice(-1)[0]}
+              />
+            )}
           </Stack>
         ) : (
           <Box
