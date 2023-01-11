@@ -1,10 +1,13 @@
 /* eslint-disable @next/next/no-img-element */
 
-import { Box, Loader, Stack } from '@mantine/core'
+import { Group, Loader, Stack } from '@mantine/core'
 import React from 'react'
+import { useStore } from '../../../../store/store'
 
 type props = { path: string | undefined; fileContent: string }
 export const BinaryFilePanel: React.FC<props> = ({ fileContent, path }) => {
+  const lastRecalculated = useStore((state) => state.lastRecalculated)
+
   const isPDF = path?.includes('.pdf')
 
   return (
@@ -18,7 +21,8 @@ export const BinaryFilePanel: React.FC<props> = ({ fileContent, path }) => {
       }}
     >
       {path?.includes('.pdf') ? (
-        <Box
+        <Group
+          position="center"
           sx={{
             height: '100%',
             iframe: {
@@ -28,8 +32,14 @@ export const BinaryFilePanel: React.FC<props> = ({ fileContent, path }) => {
             width: '100%',
           }}
         >
-          <iframe src={fileContent} /> : <Loader />
-        </Box>
+          {/* Until recalculateData has run, the object URL is invalid, as it was stored in localStorage from the last render */}
+          {/* The PDF is rendered in this iframe */}
+          {lastRecalculated ? (
+            <iframe src={fileContent} />
+          ) : (
+            <Loader size={'lg'} color={'white'} variant={'dots'} />
+          )}
+        </Group>
       ) : (
         <img src={fileContent} alt={(path || '').split('/').slice(-1)[0]} />
       )}

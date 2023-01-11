@@ -70,10 +70,11 @@ export type StoreData = {
   folderBeingCreated: string | null
   folderBeingDeleted: string | null
   fs: FS | null
+  lastRecalculated: Date | null
   openCreateFolder: boolean
   openDeleteFolder: boolean
-  openNameSearch: boolean
   openDocumentSearch: boolean
+  openNameSearch: boolean
   openSettings: boolean
   openSidebar: boolean
   pushProgress: GitProgressEvent
@@ -90,7 +91,7 @@ export type Command = {
 
 export type StoreMethods = {
   methods: {
-    recalculateData: (command?: Command[]) => void
+    recalculateData: (command?: Command[]) => Promise<void>
     refreshRepos: () => Promise<void>
     resetRepo: () => Promise<void>
     resetStore: () => void
@@ -108,6 +109,7 @@ export type StoreMethods = {
     setFolderBeingCreated: (path: string | null) => void
     setFolderBeingDeleted: (path: string | null) => void
     setFS: (fs: FS) => void
+    setLastRecalculated: (date: Date | null) => void
     setOpenCreateFolder: (status: boolean) => void
     setOpenDeleteFolder: (status: boolean) => void
     setOpenNameSearch: (status: boolean) => void
@@ -152,6 +154,7 @@ const initialState: StoreData = {
   folderBeingCreated: null,
   folderBeingDeleted: null,
   fs: null,
+  lastRecalculated: null,
   openCreateFolder: false,
   openDeleteFolder: false,
   openDocumentSearch: false,
@@ -168,8 +171,9 @@ export const useStore = create<State>()(
     immer((set, get) => ({
       ...initialState,
       methods: {
-        recalculateData: async (command) =>
-          await recalculateData(get, set, command),
+        recalculateData: async (command) => {
+          return await recalculateData(get, set, command)
+        },
 
         refreshRepos: async () => {
           const octokit = new Octokit({ auth: get().accessToken })
@@ -219,7 +223,7 @@ export const useStore = create<State>()(
         setActiveRepo: (activeRepo) => set({ activeRepo }),
         setActiveTabs: (activeTabs, activeFile) => {
           const activeRepo = get().activeRepo
-          const data = get().data
+          const data: Data = get().data
           if (!activeRepo) return
           const newData = produce(data, (draft) => {
             getActiveData(activeRepo, draft).tabs = activeTabs
@@ -238,6 +242,7 @@ export const useStore = create<State>()(
         setFolderBeingCreated: (path) => set({ folderBeingCreated: path }),
         setFolderBeingDeleted: (path) => set({ folderBeingDeleted: path }),
         setFS: (fs) => set({ fs }),
+        setLastRecalculated: (status) => set({ lastRecalculated: status }),
         setOpenCreateFolder: (status) => set({ openCreateFolder: status }),
         setOpenDeleteFolder: (status) => set({ openDeleteFolder: status }),
         setOpenDocumentSearch: (status) => set({ openDocumentSearch: status }),

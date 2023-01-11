@@ -33,6 +33,8 @@ export const recalculateData = async (
   const oldFile = getActiveData(activeRepo, data).file
   const oldTabs = getActiveData(activeRepo, data).tabs || []
 
+  console.log(oldFile)
+
   const newContents = await readFile(oldFile?.path || '')
   const newFile = { content: newContents, path: oldFile?.path }
 
@@ -50,6 +52,7 @@ export const recalculateData = async (
   if (!commands) {
     return set(() => ({
       data: newData,
+      lastRecalculated: new Date(),
     }))
   } else {
     for (const command of commands) {
@@ -60,6 +63,7 @@ export const recalculateData = async (
     }
     return set(() => ({
       data: newData,
+      lastRecalculated: new Date(),
     }))
   }
 }
