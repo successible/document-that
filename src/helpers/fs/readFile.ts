@@ -10,7 +10,10 @@ export const readFile = async (path: string): Promise<string> => {
     )
     if (!file) return ''
     if (typeof file === 'string') return file
-    const blob = new Blob([file.buffer], { type: 'application/pdf' })
+    const blob = new Blob(
+      [file.buffer],
+      path.includes('.pdf') ? { type: 'application/pdf' } : {}
+    )
     const url = URL.createObjectURL(blob)
     return url
   } catch (e) {
