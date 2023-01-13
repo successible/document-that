@@ -38,6 +38,7 @@ export type File = {
 
 export type Tab = {
   path: string
+  pending: boolean
 }
 
 export type FileTree = Record<string, Folder | File>

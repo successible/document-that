@@ -33,8 +33,6 @@ export const recalculateData = async (
   const oldFile = getActiveData(activeRepo, data).file
   const oldTabs = getActiveData(activeRepo, data).tabs || []
 
-  console.log(oldFile)
-
   const newContents = await readFile(oldFile?.path || '')
   const newFile = { content: newContents, path: oldFile?.path }
 

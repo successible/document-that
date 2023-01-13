@@ -51,7 +51,8 @@ const Index = () => {
   useEffect(() => {
     const handler = getHotkeyHandler([
       ['mod+p', () => methods.setOpenNameSearch(true)],
-      // // We want to disable the browser's default save behavior
+      // We want to disable the browser's default save behavior
+      // That is because we save the file on every key stroke
       ['mod+s', () => toast.success('File saved')],
       [
         'mod+m',

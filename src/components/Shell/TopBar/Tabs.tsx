@@ -1,11 +1,9 @@
 import { Box, Button, Group } from '@mantine/core'
-import { useViewportSize } from '@mantine/hooks'
 import { flatten } from 'flat'
-import React, { useEffect } from 'react'
+import React from 'react'
 import { WORKDIR_STATUS_KEY } from '../../../helpers/fs/createFileTree'
 import { getActiveData } from '../../../helpers/fs/getActiveData'
 import { readFile } from '../../../helpers/fs/readFile'
-import { MOBILE_WIDTH } from '../../../helpers/utils/isMobile'
 import { FileContent, useStore } from '../../../store/store'
 
 export const Tabs = () => {
@@ -15,23 +13,6 @@ export const Tabs = () => {
   const activeRepo = useStore((state) => state.activeRepo)
 
   const activeData = getActiveData(activeRepo, data)
-
-  const { width } = useViewportSize()
-
-  // This is a very niche check
-  // It ensures that on mobile, if a file is selected AND the user switches to desktop
-  // The active file has a corresponding tab added.
-
-  useEffect(() => {
-    const path = activeData.file?.path
-    if (
-      width >= MOBILE_WIDTH &&
-      path &&
-      activeData.tabs.find((tab) => tab.path === path) === undefined
-    ) {
-      methods.setActiveTabs([...activeData.tabs, { path }])
-    }
-  }, [activeData.file?.path, activeData.tabs, methods, width])
 
   return (
     <Group
@@ -94,6 +75,7 @@ export const Tabs = () => {
                 borderRadius: '3px 0px 0px 3px',
                 color: isChanged ? colors.emphasis : colors.text,
                 fontSize: '13px',
+                fontStyle: tab.pending ? 'italic' : 'normal',
                 outlineWidth: '0px !important',
                 paddingRight: 4,
               }}
@@ -121,6 +103,8 @@ export const Tabs = () => {
                 outlineWidth: '0px !important',
                 paddingLeft: 4,
               }}
+              // What happens when you click the x on a tab?
+              // The behavior is the same as observed in VS Code
               onClick={async () => {
                 let removedIndex = 0
                 const tabsToKeep = activeData.tabs.filter((t, i) => {

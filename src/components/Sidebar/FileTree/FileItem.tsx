@@ -1,8 +1,8 @@
 import { createStyles, Group, Text, UnstyledButton } from '@mantine/core'
 import { Tooltip } from '@mantine/core'
-import { useViewportSize } from '@mantine/hooks'
 import { truncate } from 'lodash'
-import React from 'react'
+import React, { useRef } from 'react'
+import useDoubleClick from 'use-double-click'
 import {
   STAGE_STATUS_KEY,
   WORKDIR_STATUS_KEY,
@@ -11,8 +11,8 @@ import { getActiveData } from '../../../helpers/fs/getActiveData'
 import { getPathInFileSystem } from '../../../helpers/fs/getPathInFileSystem'
 import { readFile } from '../../../helpers/fs/readFile'
 import { getIcon } from '../../../helpers/utils/components/getIcon'
-import { isMobile, MOBILE_WIDTH } from '../../../helpers/utils/isMobile'
-import { File, useStore } from '../../../store/store'
+import { isMobile } from '../../../helpers/utils/isMobile'
+import { File, Tab, useStore } from '../../../store/store'
 import { DotsButton } from './DotsButton'
 
 export const SIDEBAR_TRUNCATE_LENGTH = 30
@@ -51,7 +51,80 @@ export const FileItem: React.FC<props> = ({ file, fullPath, name }) => {
     },
   })().classes['icon-container']
 
-  const { width } = useViewportSize()
+  const buttonRef = useRef<HTMLButtonElement>(null)
+
+  // The behavior of clicking on a tab is designed to mimic Visual Studio
+
+  const singleClick = async () => {
+    const newTab = [{ path, pending: true }] as Tab[]
+    let newActiveTabs = [...newTab]
+
+    if (activeRepo) {
+      const file = await readFile(path)
+      methods.setActiveFile({ content: file, path })
+
+      if (isMobile()) {
+        methods.setOpenSidebar(false)
+      }
+
+      console.log(activeTabs)
+
+      // If not tab exists AT ALL, add a pending tab
+      if (activeTabs.length === 0) {
+        methods.setActiveTabs(newTab)
+      }
+
+      // If we are clicking on a tab that already exists and is not pending
+      else if (
+        activeTabs.filter((tab) => tab.path === path && tab.pending === false)
+          .length >= 1
+      ) {
+        return []
+
+        // If no pending tab exists, but other tabs do exist, add a new pending tab
+      } else if (activeTabs.filter((tab) => tab.pending).length === 0) {
+        newActiveTabs = [...activeTabs, ...newTab]
+        methods.setActiveTabs([...activeTabs, ...newTab])
+        return newActiveTabs
+
+        // If the clicked on tab does not exist in the list of tabs
+        // Swap out the old pending tab for the new pending tab
+      } else if (activeTabs.filter((tab) => path === tab.path).length === 0) {
+        newActiveTabs = activeTabs.map((tab) =>
+          tab.pending ? { path, pending: true } : tab
+        )
+        methods.setActiveTabs(newActiveTabs)
+        return newActiveTabs
+      }
+    }
+    return newTab
+  }
+
+  const doubleClick = async (activeTabs: Tab[]) => {
+    // On a double click, convert any pending tab to false
+    const newActiveTabs = activeTabs.map((tab) => {
+      if (tab.pending) {
+        return { ...tab, pending: false }
+      } else {
+        return tab
+      }
+    })
+    methods.setActiveTabs(newActiveTabs)
+  }
+
+  useDoubleClick({
+    latency: 250,
+    onDoubleClick: async () => {
+      const activeTabs = await singleClick()
+      if (activeTabs.length >= 1) {
+        await doubleClick(activeTabs)
+      }
+    },
+    onSingleClick: async () => {
+      await singleClick()
+    },
+    ref: buttonRef,
+  })
 
   return (
     <Group
@@ -95,19 +168,8 @@ export const FileItem: React.FC<props> = ({ file, fullPath, name }) => {
             padding: '0px 6px',
             width: '100%',
           }}
-          onClick={async () => {
-            if (activeRepo) {
-              const file = await readFile(path)
-              methods.setActiveFile({ content: file, path })
-              const tabExists = activeTabs.find((tab) => path === tab.path)
-              if (!tabExists && width >= MOBILE_WIDTH) {
-                methods.setActiveTabs([...activeTabs, { path }])
-              }
-              if (isMobile()) {
-                methods.setOpenSidebar(false)
-              }
-            }
-          }}
+          ref={buttonRef}
+          onClick={async () => {}}
         >
           <Group
             spacing={0}
